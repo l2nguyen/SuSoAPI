@@ -6,8 +6,11 @@ library(httr)
 library(jsonlite)
 
 #----------- SERVER/TEMPLATE DETAILS ------------------#
-# server name
-server <- "https://lena.mysurvey.solutions"
+# !NOTE: You will need to replace these with you server
+# details before using this code
+
+# server prefix (the name before mysurvey.solutions)
+server <- "lena"
 # template ID
 template <- "42214963-2299-429a-9288-7a1bbcfadff7"
 # Desired name of zip file
@@ -19,7 +22,7 @@ getQx <- function(server,
                   password="Password123")
 {
   # build base URL for API
-  baseURL <- sprintf("%s/api/v1/", 
+  baseURL <- sprintf("https://%s.mysurvey.solutions/api/v1/", 
                      server)
   
   # build quetry
@@ -57,7 +60,7 @@ getData <- function(server,
   baseURL <- sprintf("%s/api/v1", 
                    server)
   
-  exportURL <- sprintf("%s/export/%s/%s$%i/", 
+  exportURL <- sprintf("https://%s.mysurvey.solutions/export/%s/%s$%i/", 
                      baseURL, export_type, template, version)
   
   # post request to API
