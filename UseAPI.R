@@ -2,8 +2,9 @@
 rm(list=ls())
 
 # load packages
-library(httr)
-library(jsonlite)
+library(httr)       # to send requests to API
+library(jsonlite)   # to prettify JSON data
+library(dplyr)      # to wrangle the data from the API
 
 #----------- SERVER/TEMPLATE DETAILS ------------------#
 # !NOTE: You will need to replace these with you server
@@ -16,7 +17,7 @@ template <- "42214963-2299-429a-9288-7a1bbcfadff7"
 # Desired name of zip file
 Zname <- "test_data"
 
-#-------- GET TEMPLATE ID IF YOU HAVE QUESTIONNAIRE NAME ------#
+#-------- GET LIST OF QUESTIONNAIRES IMPORTED IN A SERVER ------#
 getQx <- function(server,
                   user="APIuser",
                   password="Password123")
@@ -33,8 +34,12 @@ getQx <- function(server,
   
   # If response code is 200, request was succesffuly processed
   if (status_code(data)==200) {
+    
     # save the list of imported templates from the API as a data frame
-    quests <<- fromJSON(content(data,as="text"))
+    fromAPI <- fromJSON(content(data,as="text"), flatten=TRUE)
+    
+    # Extract information about questionnaires on server
+    quests <<- as.data.frame(fromAPI$Questionnaires)
   }
   # if request was not successful, print error message
   else message("Encountered issue with status code ",status_code(data))
