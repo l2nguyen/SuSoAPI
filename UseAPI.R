@@ -5,13 +5,34 @@ rm(list=ls())
 library(httr)
 library(jsonlite)
 
-#----------- TEMPLATE DETAILS ---------------------#
+#----------- SERVER/TEMPLATE DETAILS ------------------#
 # server name
 server <- "https://lena.mysurvey.solutions"
 # template ID
 template <- "42214963-2299-429a-9288-7a1bbcfadff7"
 # Desired name of zip file
 Zname <- "test_data"
+
+#-------- GET TEMPLATE ID IF YOU HAVE QUESTIONNAIRE NAME ------#
+getQx <- function(server,
+                  user="APIuser",
+                  password="Password123")
+{
+  # build base URL
+  baseURL <- sprintf("%s/api/v1/", 
+                     server)
+  
+  query <- paste0(baseURL, "questionnaires")
+  
+  data<- GET(query, authenticate(user, password))
+  
+  if (status_code(data)==200) {
+    quests <<- fromJSON(content(data,as="text"))
+  }
+  else message("Encountered issue with status code ",status_code(data))
+}
+
+getQx(server)
 
 #---------- FUNCTION TO EXPORT DATA ---------------#
 # NOTE: This function exports data using the 
