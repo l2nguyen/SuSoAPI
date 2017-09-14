@@ -18,17 +18,22 @@ getQx <- function(server,
                   user="APIuser",
                   password="Password123")
 {
-  # build base URL
+  # build base URL for API
   baseURL <- sprintf("%s/api/v1/", 
                      server)
   
+  # build quetry
   query <- paste0(baseURL, "questionnaires")
   
+  # Send GET request to API
   data<- GET(query, authenticate(user, password))
   
+  # If response code is 200, request was succesffuly processed
   if (status_code(data)==200) {
+    # save the list of imported templates from the API as a data frame
     quests <<- fromJSON(content(data,as="text"))
   }
+  # if request was not successful, print error message
   else message("Encountered issue with status code ",status_code(data))
 }
 
@@ -48,7 +53,7 @@ getData <- function(server,
                  password="Password123",
                  filename="data")
 {
-  # build base URL
+  # build base URL for API
   baseURL <- sprintf("%s/api/v1", 
                    server)
   
