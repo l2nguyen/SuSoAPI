@@ -4,20 +4,25 @@ rm(list=ls())
 # load packages
 library(httr)       # to send requests to API
 library(jsonlite)   # to prettify JSON data
-library(dplyr)      # to wrangle the data from the API
 
 #----------- SERVER/TEMPLATE DETAILS ------------------#
 # !NOTE: You will need to replace these with you server
-# details before using this code
+# and questionnaire details before running
 
 # server prefix (the name before mysurvey.solutions)
-server <- "lena"
+server <- "lena" #<--- Change to your server name
 # template ID
-template <- "42214963-2299-429a-9288-7a1bbcfadff7"
+template <- "42214963-2299-429a-9288-7a1bbcfadff7"  #<--- Change to the desired template
 # Desired name of zip file
 Zname <- "test_data"
 
-#-------- GET LIST OF QUESTIONNAIRES IMPORTED IN A SERVER ------#
+# Put the user ID and password for the API user on your server
+userId <- "APIuser"   #<--- Change to the user ID for the API user on your server
+key <- "Password123"  #<--- Change to the password for the API user
+
+#-------- GET THE LIST OF QUESTIONNAIRES IMPORTED IN A SERVER ------#
+#NOTE: Will save the information from the server as a data frame
+
 getQx <- function(server,
                   user="APIuser",
                   password="Password123")
@@ -45,21 +50,48 @@ getQx <- function(server,
   else message("Encountered issue with status code ",status_code(data))
 }
 
-getQx(server)
+# Get all the questionnaires on the server
+getQx(server,
+      user = userId,
+      password = key)
 
-#---------- FUNCTION TO EXPORT DATA ---------------#
+
+#-------- GET THE TEMPLATE ID TO THE PROVIDED NAME OF FORM --------#
+
+getQxId <- function(server, 
+                    Qxname="",
+                    user="APIuser",
+                    password="Password123")
+{
+  if (Qxname=="") {
+    stop("Please include the name of the questionnaire in the function.")
+  } 
+  else {
+    #Get data about questionnaires on server
+    getQx(server,user,password)
+    return(quests$QuestionnaireId[quests$Title==Qxname])
+  }
+}
+
+getQxId(server,
+        user = userId,
+        password = key)
+
+
+#-------------- FUNCTION TO EXPORT DATA ------------------#
+
 # NOTE: This function exports data using the 
 # Survey Solutions API in a zip file in the current working directory
 # and then unzips it into the same directory
 # The default export type is tabular and default data file name is "data"
 
 getData <- function(server,
-                 template,
-                 version,
-                 export_type="tabular",
-                 user="APIuser",
-                 password="Password123",
-                 filename="data")
+                    user="APIuser",
+                    password="Password123",
+                    template,
+                    version=1,
+                    export_type="tabular",
+                    filename="data")
 {
   # build base URL for API
   baseURL <- sprintf("%s/api/v1", 
@@ -98,4 +130,10 @@ getData <- function(server,
 }
 
 # export data
-getData(server=server,template=template,version=2,export_type="stata", filename=Zname)
+getData(server=server,
+        user= userID,
+        password = key,
+        template = template,
+        version = 2,
+        export_type = "stata", 
+        filename = Zname)
