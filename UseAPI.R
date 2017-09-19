@@ -28,11 +28,7 @@ userId <- "APIuser"   #<--- Change to the user ID for the API user on your serve
 key <- "Password123"  #<--- Change to the password for the API user
 
 # Desired directory to download data into
-<<<<<<< HEAD
 directory <- "C:\Downloads\"
-=======
-directory <- "C:\\Users\\wb415892\\Downloads\\"
->>>>>>> 59796ef0e26c941e3e4623ce956a85ced76f1cb2
 
 #-------------------------------------------------------------------#
 #-------- GET THE LIST OF QUESTIONNAIRES IMPORTED IN A SERVER ------#
