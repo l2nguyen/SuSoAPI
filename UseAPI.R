@@ -123,7 +123,7 @@ getData <- function(server,
     stop_for_status(result,
                     "log into API using provided username and password. Check log in credentials for API user")
   }
-  else if (result==400 || result==404) {
+  else if (result==400 | result==404) {
     stop_for_status(result, 
                     "to find questionnaire. Check template ID and version number.")
   }
@@ -133,7 +133,8 @@ getData <- function(server,
   }
   
   # Wait 60 seconds for export to be made
-  Sys.sleep(60)
+  message("Waiting for export files to be generated...")
+  Sys.sleep(30)
   
   #----- CHECK STATUS OF EXPORT ------#
   action = "details"
@@ -143,8 +144,7 @@ getData <- function(server,
   details <- fromJSON(content(details_data,as="text"), flatten=TRUE)
   
   # If export has finished, download data
-  while (details$ExportStatus=="Queued" || details$ExportStatus=="Running"){
-    
+  while (details$ExportStatus=="Queued" | details$ExportStatus=="Running") {
     # Wait 30 seconds
     Sys.sleep(30)
     
@@ -162,16 +162,25 @@ getData <- function(server,
     query <- paste0(exportURL, action) 
   
     data2 <- GET(query, authenticate(user, password))
-  
+    
+    # Let user choose directory
+    folder<- choose.dir(getwd(), caption="Choose the folder to download the data to...")
+    
     # concatenate file name
-    zip_name <- file.path(paste0(filename,"_", format(Sys.time(), "%d_%b_%Y"),".zip"))
-  
+    zip_path <- paste0(folder,"\\", filename,"_", format(Sys.time(), "%d_%b_%Y"))
+    
+    # name of zip file
+    zip_name <- paste0(zip_path,".zip")
+    
     bin <- content(data2,"raw")
     # write content to the zip file
     writeBin(bin, zip_name) 
   
-    unzip(zip_name,exdir=paste0(filename,"_",format(Sys.time(), "%d_%b_%Y")))
-  } else if (details$ExportStatus="FinishedWithErrors") {
+    unzip(zip_name,exdir=zip_path)
+    message("Data files successfully downloaded into folder: ", zip_path)
+
+    
+  } else if (details$ExportStatus=="FinishedWithErrors") {
     # If error generating export file, try to download data again from beginning
     getData(server, user, password, template, version, export_type, filename)
   }
