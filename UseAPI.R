@@ -5,14 +5,19 @@ rm(list=ls())
 library(httr)       # to send requests to API
 library(jsonlite)   # to prettify JSON data
 
+#------------------------------------------------------#
 #----------- SERVER/TEMPLATE DETAILS ------------------#
+#------------------------------------------------------#
 # !NOTE: You will need to replace these with you server
 # and questionnaire details before running
 
-# server prefix (the name before mysurvey.solutions)
-server <- "lena" #<--- Change to your server name
+# cloud server prefix (the name before mysurvey.solutions)
+# NOTE: functions currently use the prefix of the cloud server
+prefix <- "lena" #<--- Change to the prefix of your cloud server
+
 # template ID
 template <- "42214963-2299-429a-9288-7a1bbcfadff7"  #<--- Change to the desired template
+
 # Desired name of zip file
 Zname <- "test_data"
 
@@ -21,7 +26,7 @@ userId <- "APIuser"   #<--- Change to the user ID for the API user on your serve
 key <- "Password123"  #<--- Change to the password for the API user
 
 #-------- GET THE LIST OF QUESTIONNAIRES IMPORTED IN A SERVER ------#
-#NOTE: Will save the information from the server as a data frame
+# NOTE: This will save the information from the server as a data frame
 
 getQx <- function(server,
                   user="APIuser",
@@ -47,38 +52,42 @@ getQx <- function(server,
     quests <<- as.data.frame(fromAPI$Questionnaires)
   }
   # if request was not successful, print error message
-  else message("Encountered issue with status code ",status_code(data))
+  else message("Encountered issue with status code ", status_code(data))
 }
 
-# Get all the questionnaires on the server
-getQx(server,
+# Get the list of all questionnaires on the server
+getQx(server = prefix,
       user = userId,
       password = key)
 
 
-#-------- GET THE TEMPLATE ID TO THE PROVIDED NAME OF FORM --------#
+#-------- GET THE TEMPLATE ID TO THE PROVIDED QUESTIONNAIRE NAME --------#
 
 getQxId <- function(server, 
                     Qxname="",
                     user="APIuser",
                     password="Password123")
 {
+  # Stop and give an error if no questionnaire name provided
   if (Qxname=="") {
     stop("Please include the name of the questionnaire in the function.")
   } 
   else {
     #Get data about questionnaires on server
     getQx(server,user,password)
+    # return ID associated with the questionnaire name
     return(quests$QuestionnaireId[quests$Title==Qxname])
   }
 }
 
-getQxId(server,
+# get template ID using the name of the questionnaire
+getQxId(server = prefix,
+        Qxname = "Household Roster",
         user = userId,
         password = key)
 
 
-#-------------- FUNCTION TO EXPORT DATA ------------------#
+#-------------- FUNCTIONS TO EXPORT DATA ------------------#
 
 # NOTE: This function exports data using the 
 # Survey Solutions API in a zip file in the current working directory
@@ -93,26 +102,62 @@ getData <- function(server,
                     export_type="tabular",
                     filename="data")
 {
+  
   # build base URL for API
-  baseURL <- sprintf("%s/api/v1", 
-                   server)
+  baseURL <- sprintf("https://%s.mysurvey.solutions/api/v1", 
+                     server)
   
-  exportURL <- sprintf("https://%s.mysurvey.solutions/export/%s/%s$%i/", 
-                     baseURL, export_type, template, version)
-  
+  exportURL <- sprintf("%s/export/%s/%s$%i/", 
+                       baseURL, export_type, template, version)
+ 
+  #---- START EXPORT ------# 
   # post request to API
   action = "start"
   
   query = paste0(exportURL,action)
-  
   data <- POST(query, authenticate(user, password))
   
-  if (status_code(data)==401) {
-    stop_for_status(test,"log into API using provided username and password")
+  result <- status_code(data)
+  
+  if (result==401) {   # login error
+    stop_for_status(result,
+                    "log into API using provided username and password. Check log in credentials for API user")
+  }
+  else if (result==400 || result==404) {
+    stop_for_status(result, 
+                    "to find questionnaire. Check template ID and version number.")
+  }
+  else if (result==200) {   #if request was posted sucessfully
+    # Display message that the exporting process is starting
+    message("Requesting data sets to be compiled on server...")
   }
   
-  # download data
-  else if (status_code(data)==200) {
+  # Wait 60 seconds for export to be made
+  Sys.sleep(60)
+  
+  #----- CHECK STATUS OF EXPORT ------#
+  action = "details"
+  query = paste0(exportURL,action)
+
+  details_data <- GET(query, authenticate(user, password))
+  details <- fromJSON(content(details_data,as="text"), flatten=TRUE)
+  
+  # If export has finished, download data
+  while (details$ExportStatus=="Queued" || details$ExportStatus=="Running"){
+    
+    # Wait 30 seconds
+    Sys.sleep(30)
+    
+    # Check details again
+    action = "details"
+    query = paste0(exportURL,action)
+    
+    details_data <- GET(query, authenticate(user, password))
+    details <- fromJSON(content(details_data,as="text"), flatten=TRUE)
+  }
+  
+  # If export is file is finished being produced, download data file
+  if (details$ExportStatus=="Finished") {
     action = ""
     query <- paste0(exportURL, action) 
   
@@ -120,18 +165,22 @@ getData <- function(server,
   
     # concatenate file name
     zip_name <- file.path(paste0(filename,"_", format(Sys.time(), "%d_%b_%Y"),".zip"))
-
+  
     bin <- content(data2,"raw")
     # write content to the zip file
     writeBin(bin, zip_name) 
   
     unzip(zip_name,exdir=paste0(filename,"_",format(Sys.time(), "%d_%b_%Y")))
-  } 
+  } else if (details$ExportStatus="FinishedWithErrors") {
+    # If error generating export file, try to download data again from beginning
+    getData(server, user, password, template, version, export_type, filename)
+  }
+  
 }
 
 # export data
-getData(server=server,
-        user= userID,
+getData(server = prefix,
+        user= userId,
         password = key,
         template = template,
         version = 2,
