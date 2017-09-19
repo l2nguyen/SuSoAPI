@@ -28,7 +28,7 @@ userId <- "APIuser"   #<--- Change to the user ID for the API user on your serve
 key <- "Password123"  #<--- Change to the password for the API user
 
 # Desired directory to download data into
-directory <- "C:\\Downloads\\" #<- change to your directory. Use \\ instead of \
+directory <- "C:\\Downloads\\" #<--- change to your directory. Use \\ instead of \
 
 #-------------------------------------------------------------------#
 #-------- GET THE LIST OF QUESTIONNAIRES IMPORTED IN A SERVER ------#
