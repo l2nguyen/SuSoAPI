@@ -8,25 +8,31 @@ library(jsonlite)   # to prettify JSON data
 #------------------------------------------------------#
 #----------- SERVER/TEMPLATE DETAILS ------------------#
 #------------------------------------------------------#
-# !NOTE: You will need to replace these with you server
+# !NOTE: These are the input data for the function to export data.
+# You will need to replace these with you server
 # and questionnaire details before running
 
 # cloud server prefix (the name before mysurvey.solutions)
 # NOTE: functions currently use the prefix of the cloud server
-prefix <- "lena" #<--- Change to the prefix of your cloud server
+prefix <- "nship2017" #<--- Change to the prefix of your cloud server
 
 # questionnaire name
-Quest <- "Household Roster"  #<--- Change to the desired template
-
-# Desired name of zip file
-Zname <- "test_data"
+Quest <- "Health Care Provider Interviews (HF7)"  #<--- Change to the desired template
+# version number
+vers <- 2
+# export data type
+type <- "stata"
 
 # Put the user ID and password for the API user on your server
 userId <- "APIuser"   #<--- Change to the user ID for the API user on your server
 key <- "Password123"  #<--- Change to the password for the API user
 
+# Desired directory to download data into
+directory <- "C:\Downloads\"
 
+#-------------------------------------------------------------------#
 #-------- GET THE LIST OF QUESTIONNAIRES IMPORTED IN A SERVER ------#
+#-------------------------------------------------------------------#
 # NOTE: This will save the information from the server as a data frame
 
 getQx <- function(server,
@@ -101,7 +107,8 @@ getData <- function(server,  # server prefix
                     password="Password123",  # password
                     qx_name,  # Name of questionnaire (not template ID)
                     version=1,  # version number
-                    export_type="tabular")  # export type
+                    export_type="tabular", # export type
+                    folder)
 {
   
   # build base URL for API
@@ -168,11 +175,13 @@ getData <- function(server,  # server prefix
     data2 <- GET(query, authenticate(user, password))
     
     # Let user choose directory
-    folder<- choose.dir(getwd(), caption="Choose the folder to download the data to...")
+    #folder<- choose.dir(getwd(), caption="Choose the folder to download the data to...")
+    
+    # Set folder to directory specified by user
     
     # concatenate file name
     zip_path <- paste0(folder,"\\", 
-                       qx_name, "-", 
+                       qx_name, "_", 
                        "v", version, "_", 
                        export_type, "_", 
                        format(Sys.time(), "%d_%b_%Y"))
@@ -189,7 +198,7 @@ getData <- function(server,  # server prefix
 
   } else if (details$ExportStatus=="FinishedWithErrors") {
     # If error generating export file, try to download data again from beginning
-    getData(server, user, password, qx_name, version, export_type, filename)
+    getData(server, user, password, qx_name, version, export_type, folder)
   }
   
 }
@@ -199,5 +208,6 @@ getData(server = prefix,
         user= userId,
         password = key,
         qx_name = Quest,
-        version = 2,
-        export_type = "stata")
+        version = vers,
+        export_type = type,
+        folder = directory)
