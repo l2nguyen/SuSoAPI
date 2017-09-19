@@ -15,8 +15,8 @@ library(jsonlite)   # to prettify JSON data
 # NOTE: functions currently use the prefix of the cloud server
 prefix <- "lena" #<--- Change to the prefix of your cloud server
 
-# template ID
-template <- "42214963-2299-429a-9288-7a1bbcfadff7"  #<--- Change to the desired template
+# questionnaire name
+Quest <- "Household Roster"  #<--- Change to the desired template
 
 # Desired name of zip file
 Zname <- "test_data"
@@ -86,8 +86,9 @@ getQxId(server = prefix,
         user = userId,
         password = key)
 
-
-#-------------- FUNCTIONS TO EXPORT DATA ------------------#
+#--------------------------------------------------------#
+#-------------- FUNCTION TO EXPORT DATA -----------------#
+#--------------------------------------------------------#
 
 # NOTE: This function exports data using the 
 # Survey Solutions API in a zip file in the current working directory
@@ -97,15 +98,17 @@ getQxId(server = prefix,
 getData <- function(server,
                     user="APIuser",
                     password="Password123",
-                    template,
+                    qx_name,
                     version=1,
-                    export_type="tabular",
-                    filename="data")
+                    export_type="tabular")
 {
   
   # build base URL for API
   baseURL <- sprintf("https://%s.mysurvey.solutions/api/v1", 
                      server)
+  
+  # Get ID of template to get export URL
+  template <- getQxId(server, qx_name, user, password)
   
   exportURL <- sprintf("%s/export/%s/%s$%i/", 
                        baseURL, export_type, template, version)
@@ -143,7 +146,7 @@ getData <- function(server,
   details_data <- GET(query, authenticate(user, password))
   details <- fromJSON(content(details_data,as="text"), flatten=TRUE)
   
-  # If export has finished, download data
+  # If server is still working on generating export data, wait and then check status again
   while (details$ExportStatus=="Queued" | details$ExportStatus=="Running") {
     # Wait 30 seconds
     Sys.sleep(30)
@@ -167,7 +170,11 @@ getData <- function(server,
     folder<- choose.dir(getwd(), caption="Choose the folder to download the data to...")
     
     # concatenate file name
-    zip_path <- paste0(folder,"\\", filename,"_", format(Sys.time(), "%d_%b_%Y"))
+    zip_path <- paste0(folder,"\\", 
+                       qx_name, "-", 
+                       "v", version, "_", 
+                       export_type, "_", 
+                       format(Sys.time(), "%d_%b_%Y"))
     
     # name of zip file
     zip_name <- paste0(zip_path,".zip")
@@ -179,10 +186,9 @@ getData <- function(server,
     unzip(zip_name,exdir=zip_path)
     message("Data files successfully downloaded into folder: ", zip_path)
 
-    
   } else if (details$ExportStatus=="FinishedWithErrors") {
     # If error generating export file, try to download data again from beginning
-    getData(server, user, password, template, version, export_type, filename)
+    getData(server, user, password, qx_name, version, export_type, filename)
   }
   
 }
@@ -191,7 +197,6 @@ getData <- function(server,
 getData(server = prefix,
         user= userId,
         password = key,
-        template = template,
+        qx_name = Quest,
         version = 2,
-        export_type = "stata", 
-        filename = Zname)
+        export_type = "stata")
