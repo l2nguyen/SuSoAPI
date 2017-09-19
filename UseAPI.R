@@ -14,10 +14,10 @@ library(jsonlite)   # to prettify JSON data
 
 # cloud server prefix (the name before mysurvey.solutions)
 # NOTE: functions currently use the prefix of the cloud server
-prefix <- "nship2017" #<--- Change to the prefix of your cloud server
+prefix <- "lena" #<--- Change to the prefix of your cloud server
 
 # questionnaire name
-Quest <- "Health Care Provider Interviews (HF7)"  #<--- Change to the desired template
+Quest <- "Household Roster"  #<--- Change to the desired questionnaire
 # version number
 vers <- 2
 # export data type
@@ -28,7 +28,7 @@ userId <- "APIuser"   #<--- Change to the user ID for the API user on your serve
 key <- "Password123"  #<--- Change to the password for the API user
 
 # Desired directory to download data into
-directory <- "C:\Downloads\"
+directory <- "C:\\Downloads\\" #<- change to your directory. Use \\ instead of \
 
 #-------------------------------------------------------------------#
 #-------- GET THE LIST OF QUESTIONNAIRES IMPORTED IN A SERVER ------#
