@@ -25,6 +25,7 @@ Zname <- "test_data"
 userId <- "APIuser"   #<--- Change to the user ID for the API user on your server
 key <- "Password123"  #<--- Change to the password for the API user
 
+
 #-------- GET THE LIST OF QUESTIONNAIRES IMPORTED IN A SERVER ------#
 # NOTE: This will save the information from the server as a data frame
 
@@ -91,16 +92,16 @@ getQxId(server = prefix,
 #--------------------------------------------------------#
 
 # NOTE: This function exports data using the 
-# Survey Solutions API in a zip file in the current working directory
+# Survey Solutions API in a zip file into a selected directory
 # and then unzips it into the same directory
-# The default export type is tabular and default data file name is "data"
+# The default export type is tabular 
 
-getData <- function(server,
-                    user="APIuser",
-                    password="Password123",
-                    qx_name,
-                    version=1,
-                    export_type="tabular")
+getData <- function(server,  # server prefix
+                    user="APIuser",  # API user ID
+                    password="Password123",  # password
+                    qx_name,  # Name of questionnaire (not template ID)
+                    version=1,  # version number
+                    export_type="tabular")  # export type
 {
   
   # build base URL for API
