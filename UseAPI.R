@@ -71,13 +71,13 @@ getQxId <- function(server,
     #Get data about questionnaires on server
     getQx(server,user,password)
     # return ID associated with the questionnaire name
-    return(quests$QuestionnaireId[quests$Title==Qxname])
+    return(unique(quests$QuestionnaireId[quests$Title==Qxname]))
   }
 }
 
-#--------------------------------------------------------#
-#-------------- FUNCTION TO EXPORT DATA -----------------#
-#--------------------------------------------------------#
+#--------------------------------------------#
+#-------------- EXPORT DATA -----------------#
+#--------------------------------------------#
 # Args: 
 # server: server prefix
 # user: API user ID, default is API user
@@ -90,6 +90,7 @@ getQxId <- function(server,
 #
 # Returns:
 # The exported data will be downloaded into the specified directory
+# It also unzips the downloaded file into the same directory
 
 getData <- function(server,  # server prefix
                     user = "APIuser",  # API user ID
@@ -193,6 +194,62 @@ getData <- function(server,  # server prefix
   
 }
 
+
+#----------------------------------------------------#
+#-------------- EXPORT ALL VERSIONS -----------------#
+#----------------------------------------------------#
+# Args: 
+# server: server prefix
+# user: API user ID, default is API user
+# password: password for API user, default is Password 123
+# qx_name: Name of the questionnaire of interest
+# export type: the data type that you would like to export
+# options are tabular, stata, spss, binary, paradata
+# folder: the directory you would like to export the data into. Use '\\' instead of '\'
+#
+# Returns:
+# The exported data of all the versions. Each version will have its own zip file and folder
+
+getAllVers <- function(server,
+                       user = "APIuser",  # API user ID
+                       password = "Password123",  # password
+                       qx_name,  # Name of questionnaire (not template ID)
+                       export_type ="tabular", # export type
+                       folder   # directory for data download
+                       )
+{
+  # First, get questionnaire information from server
+  getQx(server,user,password)
+  
+  # get all versions of the questionnaire on the server
+  allVers <- quests$Version[quests$Title==Quest]
+  
+  # If only one version
+  if (length(allVers) == 1) {
+            getData(
+            server = prefix,
+            user= userId,
+            password = key,
+            qx_name = Quest,
+            version = allVers[1],
+            export_type = type,
+            folder = directory
+            )
+  } else if (length(allVers) > 1) {
+    for (i in allVers) {
+            getData(
+            server = prefix,
+            user= userId,
+            password = key,
+            qx_name = Quest,
+            version = i,
+            export_type = type,
+            folder = directory
+            )
+    }
+  }
+}
+
 #------------------------------------------------------#
 #----------- SERVER/TEMPLATE DETAILS ------------------#
 #------------------------------------------------------#
@@ -207,7 +264,7 @@ prefix <- "lena" #<--- Change to the prefix of your cloud server
 # questionnaire name
 Quest <- "Tanzania National Panel Survey Wave 5 (DRAFT)"  #<--- Change to the desired questionnaire
 # version number
-vers <- 2
+vers <- 13
 # export data type
 type <- "stata"
 
@@ -219,22 +276,18 @@ key <- "Password1234"  #<--- Change to the password for the API user
 directory <- "C:\\Users\\wb415892\\Downloads\\" #<--- change to your directory. Use \\ instead of \
 
 
-
 #------------------- TEST THE FUNCTIONS ---------------------#
-
-
-# get template ID using the name of the questionnaire
-getQxId(server = prefix,
-        Qxname = "Household Roster",
-        user = userId,
-        password = key)
-
 
 # Get the list of all questionnaires on the server
 getQx(server = prefix,
       user = userId,
       password = key)
 
+# get template ID using the name of the questionnaire
+getQxId(server = prefix,
+        Qxname = "Household Roster",
+        user = userId,
+        password = key)
 
 # export data
 getData(server = prefix,
@@ -244,3 +297,10 @@ getData(server = prefix,
         version = vers,
         export_type = type,
         folder = directory)
+
+getAllVers(server = prefix,
+           user= userId,
+           password = key,
+           qx_name = Quest,
+           export_type = type,
+           folder = directory)
