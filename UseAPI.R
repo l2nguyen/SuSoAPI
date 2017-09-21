@@ -225,29 +225,17 @@ getAllVers <- function(server,
   # get all versions of the questionnaire on the server
   allVers <- quests$Version[quests$Title==Quest]
   
-  # If only one version
-  if (length(allVers) == 1) {
-            getData(
-            server = prefix,
-            user= userId,
-            password = key,
-            qx_name = Quest,
-            version = allVers[1],
-            export_type = type,
-            folder = directory
-            )
-  } else if (length(allVers) > 1) {
-    for (i in allVers) {
-            getData(
-            server = prefix,
-            user= userId,
-            password = key,
-            qx_name = Quest,
-            version = i,
-            export_type = type,
-            folder = directory
-            )
-    }
+  # Export data for each version if more than one version
+  for (i in allVers) {
+          getData(
+          server = prefix,
+          user= userId,
+          password = key,
+          qx_name = Quest,
+          version = i,
+          export_type = type,
+          folder = directory
+          )
   }
 }
 
@@ -271,7 +259,7 @@ type <- "stata"
 
 # Put the user ID and password for the API user on your server
 userId <- "APIuser"   #<--- Change to the user ID for the API user on your server
-key <- "Password1234"  #<--- Change to the password for the API user
+key <- "Password123"  #<--- Change to the password for the API user
 
 # Desired directory to download data into
 directory <- "C:\\Users\\wb415892\\Downloads\\" #<--- change to your directory. Use \\ instead of \
@@ -299,6 +287,7 @@ getData(server = prefix,
         export_type = type,
         folder = directory)
 
+# Export all versions of a questionnaire
 getAllVers(server = prefix,
            user= userId,
            password = key,
