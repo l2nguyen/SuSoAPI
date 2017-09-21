@@ -182,7 +182,8 @@ getData <- function(server,  # server prefix
     
     bin <- content(data2,"raw")
     # write content to the zip file
-    writeBin(bin, zip_name) 
+    writeBin(bin, zip_name)
+    message("Sucessfully exported ", qx_name, " version ", version)
   
     unzip(zip_name,exdir = zip_path)
     message("Data files successfully downloaded into folder: ", "\n", zip_path)
