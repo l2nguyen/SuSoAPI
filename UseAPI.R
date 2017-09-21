@@ -5,39 +5,23 @@ rm(list=ls())
 library(httr)       # to send requests to API
 library(jsonlite)   # to prettify JSON data
 
-#------------------------------------------------------#
-#----------- SERVER/TEMPLATE DETAILS ------------------#
-#------------------------------------------------------#
-# !NOTE: These are the input data for the function to export data.
-# You will need to replace these with you server
-# and questionnaire details before running
-
-# cloud server prefix (the name before mysurvey.solutions)
-# NOTE: functions currently use the prefix of the cloud server
-prefix <- "lena" #<--- Change to the prefix of your cloud server
-
-# questionnaire name
-Quest <- "Household Roster"  #<--- Change to the desired questionnaire
-# version number
-vers <- 2
-# export data type
-type <- "stata"
-
-# Put the user ID and password for the API user on your server
-userId <- "APIuser"   #<--- Change to the user ID for the API user on your server
-key <- "Password123"  #<--- Change to the password for the API user
-
-# Desired directory to download data into
-directory <- "C:\\Downloads\\" #<--- change to your directory. Use \\ instead of \
-
 #-------------------------------------------------------------------#
 #-------- GET THE LIST OF QUESTIONNAIRES IMPORTED IN A SERVER ------#
 #-------------------------------------------------------------------#
 # NOTE: This will save the information from the server as a data frame
 
+# Args: 
+# server: server prefix
+# user: API user ID, default is API user
+# password: password for API user, default is Password 123
+#
+# Returns:
+# A data frame that has all the information about the imported
+# questionnaires on the server. This is a prettified version of the JSON response.
+
 getQx <- function(server,
-                  user="APIuser",
-                  password="Password123")
+                  user = "APIuser",
+                  password = "Password123")
 {
   # build base URL for API
   baseURL <- sprintf("https://%s.mysurvey.solutions/api/v1/", 
@@ -62,18 +46,22 @@ getQx <- function(server,
   else message("Encountered issue with status code ", status_code(data))
 }
 
-# Get the list of all questionnaires on the server
-getQx(server = prefix,
-      user = userId,
-      password = key)
-
-
+#------------------------------------------------------------------------#
 #-------- GET THE TEMPLATE ID TO THE PROVIDED QUESTIONNAIRE NAME --------#
+#------------------------------------------------------------------------#
+# Args: 
+# server: server prefix
+# Qxname: Name of the questionnaire of interst
+# user: API user ID, default is API user
+# password: password for API user, default is Password 123
+#
+# Returns:
+# The template ID associated with the name of the questionnaire
 
 getQxId <- function(server, 
-                    Qxname="",
-                    user="APIuser",
-                    password="Password123")
+                    Qxname = "",
+                    user = "APIuser",
+                    password = "Password123")
 {
   # Stop and give an error if no questionnaire name provided
   if (Qxname=="") {
@@ -87,27 +75,28 @@ getQxId <- function(server,
   }
 }
 
-# get template ID using the name of the questionnaire
-getQxId(server = prefix,
-        Qxname = "Household Roster",
-        user = userId,
-        password = key)
-
 #--------------------------------------------------------#
 #-------------- FUNCTION TO EXPORT DATA -----------------#
 #--------------------------------------------------------#
-
-# NOTE: This function exports data using the 
-# Survey Solutions API in a zip file into a selected directory
-# and then unzips it into the same directory
-# The default export type is tabular 
+# Args: 
+# server: server prefix
+# user: API user ID, default is API user
+# password: password for API user, default is Password 123
+# qx_name: Name of the questionnaire of interest
+# version: version number of the data you would like to export
+# export type: the data type that you would like to export
+# options are tabular, stata, spss, binary, paradata
+# folder: the directory you would like to export the data into. Use '\\' instead of '\'
+#
+# Returns:
+# The exported data will be downloaded into the specified directory
 
 getData <- function(server,  # server prefix
-                    user="APIuser",  # API user ID
-                    password="Password123",  # password
+                    user = "APIuser",  # API user ID
+                    password = "Password123",  # password
                     qx_name,  # Name of questionnaire (not template ID)
-                    version=1,  # version number
-                    export_type="tabular", # export type
+                    version = 1,  # version number
+                    export_type ="tabular", # export type
                     folder)
 {
   
@@ -130,15 +119,16 @@ getData <- function(server,  # server prefix
   
   result <- status_code(data)
   
-  if (result==401) {   # login error
+  # error handling
+  if (result == 401) {   # login error
     stop_for_status(result,
                     "log into API using provided username and password. Check log in credentials for API user")
   }
-  else if (result==400 | result==404) {
+  else if (result == 400 | result == 404) {
     stop_for_status(result, 
-                    "to find questionnaire. Check template ID and version number.")
+                    "to find questionnaire. Check template name and version number.")
   }
-  else if (result==200) {   #if request was posted sucessfully
+  else if (result == 200) {   #if request was posted sucessfully
     # Display message that the exporting process is starting
     message("Requesting data sets to be compiled on server...")
   }
@@ -155,7 +145,7 @@ getData <- function(server,  # server prefix
   details <- fromJSON(content(details_data,as="text"), flatten=TRUE)
   
   # If server is still working on generating export data, wait and then check status again
-  while (details$ExportStatus=="Queued" | details$ExportStatus=="Running") {
+  while (details$ExportStatus == "Queued" | details$ExportStatus == "Running") {
     # Wait 30 seconds
     Sys.sleep(30)
     
@@ -168,7 +158,7 @@ getData <- function(server,  # server prefix
   }
   
   # If export is file is finished being produced, download data file
-  if (details$ExportStatus=="Finished") {
+  if (details$ExportStatus == "Finished") {
     action = ""
     query <- paste0(exportURL, action) 
   
@@ -193,15 +183,58 @@ getData <- function(server,  # server prefix
     # write content to the zip file
     writeBin(bin, zip_name) 
   
-    unzip(zip_name,exdir=zip_path)
-    message("Data files successfully downloaded into folder: ", zip_path)
+    unzip(zip_name,exdir = zip_path)
+    message("Data files successfully downloaded into folder: ", "\n", zip_path)
 
-  } else if (details$ExportStatus=="FinishedWithErrors") {
+  } else if (details$ExportStatus == "FinishedWithErrors") {
     # If error generating export file, try to download data again from beginning
     getData(server, user, password, qx_name, version, export_type, folder)
   }
   
 }
+
+#------------------------------------------------------#
+#----------- SERVER/TEMPLATE DETAILS ------------------#
+#------------------------------------------------------#
+# !NOTE: These are the input data for the function to export data.
+# You will need to replace these with you server
+# and questionnaire details before running
+
+# cloud server prefix (the name before mysurvey.solutions)
+# NOTE: functions currently use the prefix of the cloud server
+prefix <- "lena" #<--- Change to the prefix of your cloud server
+
+# questionnaire name
+Quest <- "Tanzania National Panel Survey Wave 5 (DRAFT)"  #<--- Change to the desired questionnaire
+# version number
+vers <- 2
+# export data type
+type <- "stata"
+
+# Put the user ID and password for the API user on your server
+userId <- "APIuser"   #<--- Change to the user ID for the API user on your server
+key <- "Password1234"  #<--- Change to the password for the API user
+
+# Desired directory to download data into
+directory <- "C:\\Users\\wb415892\\Downloads\\" #<--- change to your directory. Use \\ instead of \
+
+
+
+#------------------- TEST THE FUNCTIONS ---------------------#
+
+
+# get template ID using the name of the questionnaire
+getQxId(server = prefix,
+        Qxname = "Household Roster",
+        user = userId,
+        password = key)
+
+
+# Get the list of all questionnaires on the server
+getQx(server = prefix,
+      user = userId,
+      password = key)
+
 
 # export data
 getData(server = prefix,
