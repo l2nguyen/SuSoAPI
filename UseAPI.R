@@ -65,7 +65,7 @@ getQxId <- function(server,
 {
   # Stop and give an error if no questionnaire name provided
   if (Qxname=="") {
-    stop("Please include the name of the questionnaire in the function.")
+    stop("Please provide the name of the questionnaire.")
   } 
   else {
     #Get data about questionnaires on server
@@ -73,6 +73,25 @@ getQxId <- function(server,
     # return ID associated with the questionnaire name
     return(unique(quests$QuestionnaireId[quests$Title==Qxname]))
   }
+}
+
+#--------------------------------------------#
+#-------------- CHECK STATUS ----------------#
+#--------------------------------------------#
+# NOTE: The following is auxiliary functions to be 
+# used in the data export function below.
+# This is used to check the status of the
+# export
+getDetails <- function(exportURL,
+                       user = "APIUser",
+                       password = "Password123")
+{
+  #----- CHECK STATUS OF EXPORT ------#
+  action = "details"
+  query = paste0(exportURL,action)
+  
+  details_data <- GET(query, authenticate(user, password))
+  details <- fromJSON(content(details_data,as="text"), flatten=TRUE)
 }
 
 #--------------------------------------------#
@@ -134,14 +153,14 @@ getData <- function(server,  # server prefix
     message("Requesting data sets to be compiled on server...")
   }
   
-  # Wait 60 seconds for export to be made
+  # Wait 30 seconds for export to be made
   message("Waiting for export files to be generated...")
   Sys.sleep(30)
   
   #----- CHECK STATUS OF EXPORT ------#
   action = "details"
   query = paste0(exportURL,action)
-
+  
   details_data <- GET(query, authenticate(user, password))
   details <- fromJSON(content(details_data,as="text"), flatten=TRUE)
   
