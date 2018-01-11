@@ -33,8 +33,11 @@ getQx <- function(server,
   # Send GET request to API
   data<- GET(query, authenticate(user, password))
   
+  if (status_code(data) == 401) {   # login error
+    message("Incorrect username or password. Check login credentials for API user")
+  }  
   # If response code is 200, request was succesffuly processed
-  if (status_code(data)==200) {
+  else if (status_code(data)==200) {
     
     # save the list of imported templates from the API as a data frame
     fromAPI <- fromJSON(content(data,as="text"), flatten=TRUE)
@@ -94,9 +97,9 @@ getDetails <- function(exportURL,
   details <- fromJSON(content(details_data,as="text"), flatten=TRUE)
 }
 
-#--------------------------------------------#
-#-------------- EXPORT DATA -----------------#
-#--------------------------------------------#
+#---------------------------------------------#
+#------- EXPORT DATA FROM ONE TEMPLATE -------#
+#---------------------------------------------#
 # Args: 
 # server: server prefix
 # user: API user ID, default is API user
