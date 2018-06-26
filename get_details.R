@@ -11,7 +11,7 @@
 # A data frame that has all the details returned from the server
 # about the status of the export
 
-get_details <- function(server,
+get_details <- function(export_URL,
                         user,
                         password,
                         attempt = 1) {
@@ -23,12 +23,9 @@ get_details <- function(server,
   require(lubridate)
 
   #-- GET EXPORT STATUS DETAILS --#
-  # build base URL for API
-  API_URL <- sprintf("https://%s.mysurvey.solutions/api/v1/", 
-                     server)
   
   # Make URL for details
-  details_query = paste0(API_URL, "details")
+  details_query <- paste0(export_URL, "details")
 
   # Get status of export from server
   statusExport <- GET(details_query, authenticate(user, password))
