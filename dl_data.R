@@ -32,7 +32,7 @@ dl_data <- function(server,  # server prefix
   api_URL <- sprintf("https://%s.mysurvey.solutions/api/v1", 
                      server)
   
-  check_setup(api_URL, login, password)
+  check_setup(api_URL, user, password)
   
   # Get ID of template to get export URL
   template <- get_qx_id(server, qx_name, user, password)
@@ -46,10 +46,8 @@ dl_data <- function(server,  # server prefix
   # post request to API
   start_query = paste0(export_URL, "start")
   
-  startExport <- POST(start_query, authenticate(login, password))
+  startExport <- POST(start_query, authenticate(user, password))
   
-  # get result of query
-  result <- status_code(data)
   # Get start time of export
   start_time <- as.POSIXct(headers(startExport)$date, format = "%a, %d %b %Y %H:%M:%S", tz = "GMT")
   
@@ -68,7 +66,7 @@ dl_data <- function(server,  # server prefix
     Sys.sleep(1)
     
     #-- Get details of export status --#
-    get_details(export_URL, login, password)
+    get_details(export_URL, user, password)
     
   }	else if (status_code(startExport) == 400 | status_code(startExport) == 404) {
     stop_for_status(start_result,
@@ -89,7 +87,7 @@ dl_data <- function(server,  # server prefix
     Sys.sleep(10)
     
     # Check details again
-    get_details(export_URL, login, password)
+    get_details(export_URL, user, password)
   
     # If running or queued, keep waiting and check status again
     if (export_details$ExportStatus %in% c("Queued","Running")) {
@@ -114,7 +112,7 @@ dl_data <- function(server,  # server prefix
         
       } else if (last_update < startReqTime) {
         # start export again if query did not go through for some reason
-        startExport <- POST(start_query, authenticate(login, password))
+        startExport <- POST(start_query, authenticate(user, password))
       }
     }
   }
@@ -135,7 +133,7 @@ dl_data <- function(server,  # server prefix
     # Query to download data
     downloadData <- GET(
       export_URL,
-      authenticate(login, password)
+      authenticate(user, password)
     )
     
     if (status_code(downloadData) == 200) {
