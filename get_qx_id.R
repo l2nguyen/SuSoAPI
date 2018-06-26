@@ -15,16 +15,20 @@ get_qx_id <- function(server,
                     user = "APIuser",
                     password = "Password123")
 {
-  
-  
-  # Stop and give an error if no questionnaire name provided
-  if (qx_name == "") {
+  # require packages
+  require(httr)
+  require(jsonlite)
+  require(dplyr)
+    
+  # check if questionnaire is imported on server
+  if (qx_name %in% qnrList_all$Title) {
+    # return ID associated with questionnaire name
+    return(unique(qnrList_all$QuestionnaireId[qnrList_all$Title == qx_name]))
+  } else if (qx_name == "") {
+    # give error
     stop("Error: Please provide the name of the questionnaire.")
-  } 
+  }
   else {
-    #Get data about questionnaires on server
-    get_qx(server, user, password)
-    # return ID associated with the questionnaire name
-    return(unique(qnrList_all$QuestionnaireId[qnrList_all$Title == Qxname]))
+    stop("Error: Please check the questionnaire name.")
   }
 }
