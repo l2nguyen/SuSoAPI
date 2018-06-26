@@ -44,7 +44,7 @@ dl_data <- function(server,  # server prefix
   # Request export files to be created
   # -----------------------------------------------------------------------------
   # post request to API
-  start_query = paste0(export_URL, "start")
+  start_query <- paste0(export_URL, "start")
   
   startExport <- POST(start_query, authenticate(user, password))
   
@@ -73,9 +73,8 @@ dl_data <- function(server,  # server prefix
                     "to find questionnaire. Check template name and version number.")
   }
   
-  # Wait 30 seconds for export to be made
+  # Wait 10 seconds for export to be made
   message("Waiting for export files to be generated...")
-  Sys.sleep(10)
   
   # -----------------------------------------------------------------------------
   # React to status
@@ -85,6 +84,8 @@ dl_data <- function(server,  # server prefix
   while (export_details$ExportStatus %in% c("NotStarted", "Queued", "Running")) {
     # Wait 30 seconds
     Sys.sleep(10)
+    
+    message(export_details$ExportStatus)
     
     # Check details again
     get_details(export_URL, user, password)
@@ -118,7 +119,7 @@ dl_data <- function(server,  # server prefix
   }
   
   # If export is file is finished being produced, download data file
-  if (details$ExportStatus == "Finished") {
+  if (export_details$ExportStatus == "Finished") {
     # Set folder to directory specified by user
     # concatenate file name
     zip_path <- paste0(folder,"\\", 
