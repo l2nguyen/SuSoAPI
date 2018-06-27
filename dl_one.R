@@ -29,12 +29,13 @@ dl_one <- function(server,  # server prefix
   source("get_qx_id.R")
   
   require(stringr)
+  require(jsonlite)
+  require(httr)
+  require(lubridate)
   
   # build base URL for API
   api_URL <- sprintf("https://%s.mysurvey.solutions/api/v1", 
                      server)
-  
-  check_setup(api_URL, user, password)
   
   # trim white space before
   qx_name <- str_trim(qx_name)
