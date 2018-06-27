@@ -28,11 +28,16 @@ dl_one <- function(server,  # server prefix
   source("get_qx.R")
   source("get_qx_id.R")
   
+  require(stringr)
+  
   # build base URL for API
   api_URL <- sprintf("https://%s.mysurvey.solutions/api/v1", 
                      server)
   
   check_setup(api_URL, user, password)
+  
+  # trim white space before
+  qx_name <- str_trim(qx_name)
   
   # Get ID of template to get export URL
   template <- get_qx_id(server, qx_name, user, password)
@@ -79,20 +84,30 @@ dl_one <- function(server,  # server prefix
   # -----------------------------------------------------------------------------
   # React to status
   # -----------------------------------------------------------------------------
+  # Note: This will try to download the data 5 times
+  
+  requestCounter <- 1
   
   # If server is still working on generating export data, wait and then check status again
-  while (export_details$ExportStatus %in% c("NotStarted", "Queued", "Running")) {
-    # Wait 30 seconds
+  while (export_details$ExportStatus %in% c("NotStarted", "Queued", "Running") 
+         & requestCounter <= 5) {
+    # Wait 10 seconds
     Sys.sleep(10)
-    
-    message(export_details$ExportStatus)
+  
     
     # Check details again
     get_details(export_URL, user, password)
+    
+    # for debugging purposes
+    message(paste0("Request number: ", requestCounter))
+    message(paste0("Status: ", export_details$ExportStatus))
   
     # If running or queued, keep waiting and check status again
     if (export_details$ExportStatus %in% c("Queued","Running")) {
-      Sys.sleep(5)
+      
+      # wait before making another request,
+      # where time is a function of the number of requests
+      Sys.sleep(5 * requestcounter)
     }
     
     # if creation of files not started
@@ -114,6 +129,12 @@ dl_one <- function(server,  # server prefix
       } else if (last_update < startReqTime) {
         # start export again if query did not go through for some reason
         startExport <- POST(start_query, authenticate(user, password))
+        
+        # wait before making another request,
+        # where time is a function of the number of requests
+        Sys.sleep(5 * requestCounter)
+        # increment the counter of requests
+        requestCounter <- requestCounter + 1
       }
     }
   }
@@ -125,8 +146,7 @@ dl_one <- function(server,  # server prefix
     zip_path <- paste0(folder,"\\", 
                        qx_name, "_", 
                        "v", version, "_", 
-                       export_type, "_", 
-                       format(Sys.time(), "%d_%b_%Y"))
+                       export_type)
     
     # name of zip file
     zip_name <- paste0(zip_path,".zip")
@@ -152,8 +172,8 @@ dl_one <- function(server,  # server prefix
     
   } 
   
-  # export with errors - work in progress
-  # if (details$ExportStatus == "FinishedWithErrors") {
-  #   # add something for it to try again
+  # if finished with errors - try again
+  #if (details$ExportStatus == "FinishedWithErrors") {
+     # add something for it to try again
   # }
 }
