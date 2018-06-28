@@ -27,6 +27,7 @@ dl_one <- function(server,  # server prefix
   source("get_details.R")
   source("get_qx.R")
   source("get_qx_id.R")
+  source("serverDetails.R")
   
   require(stringr)
   require(jsonlite)
@@ -102,7 +103,11 @@ dl_one <- function(server,  # server prefix
     # for debugging purposes
     message(paste0("Request number: ", requestCounter))
     message(paste0("Status: ", export_details$ExportStatus))
+    
+    last_update <- as.POSIXct(export_details$LastUpdateDate, 
+                              format = "%a, %d %b %Y %H:%M:%S", tz = "GMT")
   
+
     # If running or queued, keep waiting and check status again
     if (export_details$ExportStatus %in% c("Queued","Running")) {
       
