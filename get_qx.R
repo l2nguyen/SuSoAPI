@@ -15,9 +15,9 @@
 
 get_qx <- function(server, user, password) {
   # require packages
-  require(httr)
-  require(jsonlite)
-  require(dplyr)
+  require("httr")
+  require("jsonlite")
+  require("dplyr")
   
   # build base URL for API
   API_URL <- sprintf("https://%s.mysurvey.solutions/api/v1/", 

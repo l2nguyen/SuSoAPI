@@ -29,10 +29,10 @@ dl_one <- function(server,  # server prefix
   source("get_qx_id.R")
   source("serverDetails.R")
   
-  require(stringr)
-  require(jsonlite)
-  require(httr)
-  require(lubridate)
+  require("stringr")
+  require("jsonlite")
+  require("httr")
+  require("lubridate")
   
   # build base URL for API
   api_URL <- sprintf("https://%s.mysurvey.solutions/api/v1", 

@@ -17,10 +17,10 @@ get_details <- function(export_URL,
                         attempt = 1) {
 
   # require packages
-  require(httr)
-  require(jsonlite)
-  require(dplyr)
-  require(lubridate)
+  require("httr")
+  require("jsonlite")
+  require("dplyr")
+  require("lubridate")
 
   #-- GET EXPORT STATUS DETAILS --#
   

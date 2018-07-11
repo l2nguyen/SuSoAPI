@@ -16,9 +16,9 @@ get_qx_id <- function(server,
                     password = "Password123")
 {
   # require packages
-  require(httr)
-  require(jsonlite)
-  require(dplyr)
+  require("httr")
+  require("jsonlite")
+  require("dplyr")
     
   # check if questionnaire is imported on server
   if (qx_name %in% qnrList_all$Title) {
