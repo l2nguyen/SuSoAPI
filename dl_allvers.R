@@ -21,20 +21,22 @@ dl_allVers <- function(server,
                        folder   # directory for data download
 )
 {
+  source("dl_one.R")
+
   # Required packages
-  require(stringr)
-  require(jsonlite)
-  require(httr)
-  require(lubridate)
+  require("stringr")
+  require("jsonlite")
+  require("httr")
+  require("lubridate")
 
   # First, get questionnaire information from server
   get_qx(server, user, password)
 
-  # trim white space before
-  qx_name <- str_trim(qx_name)
+  # get template ID of provided template
+  template <- get_qx_id(server, str_trim(qx_name), user, password)
 
-  # get all versions of the questionnaire on the server
-  allVers <- qnrList_all$Version[qnrList_all$Title == qx_name]
+  # get all versions of the questionnaire on the server based on template ID
+  allVers <- qnrList_all$Version[qnrList_all$QuestionnaireId == template]
 
   # Export data for each version if more than one version
   for (i in allVers) {
