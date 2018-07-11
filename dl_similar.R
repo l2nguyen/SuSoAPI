@@ -19,8 +19,10 @@
 dl_similar <- function(server,
                        user = "APIuser",  # API user ID
                        password = "Password123",  # password
-                       pattern,  # Name of questionnaire (not template ID),
-                       from.start = TRUE, # match from the beginning. If false, it will match from end
+                       password = "Password123",  # password
+                       pattern,  # Name of questionnaire (not template ID). Can use regex
+                       exclude = NULL, # words to exclude, can be list
+                       ignore.case = TRUE,  # to ignore case in filter
                        export_type = "tabular", # export type
                        folder   # directory for data download
 )
@@ -36,15 +38,24 @@ dl_similar <- function(server,
   # First, get questionnaire information from server
   get_qx(server, user, password)
 
-  # Make list of templates to download data for
-  if (from.start) {# If starting from the beginning
-    qnrList_all %>% filter(str_detect(Title, paste0("^", pattern))) -> dl_list
-  } else {# if starting from end
-    qnrList_all %>% filter(str_detect(Title, paste0(pattern, "$"))) -> dl_list
+  if (ignore.case) {
+    pattern <- str_to_upper(str_trim(pattern))
+    exclude <- str_to_upper(str_trim(exclude))
+    qnrList_all$Title <- str_to_upper(str_trim(qnrList_all$Title))
+  }
+
+  # make initial download list based on pattern
+  dl_list <- filter(qnrList_all, str_detect(Title, pattern))
+
+  # filter download list to exclude titlesi n the list of words to exclude
+  if (length(exclude) == 1) {
+    dl_list <- filter(dl_list, !(str_detect(Title, exclude)))
+  }
+  if (length(exclude) > 1) {
+    dl_list <- filter(dl_list, !(str_detect(Title, paste(exclude, collapse = "|"))))
   }
 
   for (qnr in 1:nrow(dl_list)) {
-
       # download all items in a list
       dl_one(
         server,
