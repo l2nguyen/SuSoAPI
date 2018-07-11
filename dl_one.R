@@ -99,48 +99,48 @@ dl_one <- function(server,  # server prefix
     
     # Check details again
     get_details(export_URL, user, password)
+
+    # get time of last update
+    last_update <- export_details$LastUpdateDate
+
     
     # for debugging purposes
     message(paste0("Request number: ", requestCounter))
     message(paste0("Status: ", export_details$ExportStatus))
     
-    last_update <- as.POSIXct(export_details$LastUpdateDate, 
-                              format = "%a, %d %b %Y %H:%M:%S", tz = "GMT")
-  
-
     # If running or queued, keep waiting and check status again
     if (export_details$ExportStatus %in% c("Queued","Running")) {
-      
+
       # wait before making another request,
       # where time is a function of the number of requests
-      Sys.sleep(5 * requestcounter)
-    }
-    
-    # if creation of files not started
-    if (export_details$ExportStatus == "NotStarted" & export_details$HasExportedFile == TRUE) {
-      
+      Sys.sleep(5 * requestCounter)
+
+      requestCounter <- requestCounter + 1
+    } else if (export_details$ExportStatus == "NotStarted") {
+
       # check if exported file has already finished and export file now exists
       # NOTE: Tabular data files generate so quickly that the server has reverted
       # back to "Not Started" status by the time we check for details.
-      
-      # if last update is after request, then file is ready to download
-      if (is.null(last_update) == TRUE | last_update >= start_time) {
-        
+      if (export_details$HasExportedFile == TRUE) {
+        # if last update is after request, then file is ready to download
+        if (is.null(last_update) == TRUE | last_update >= start_time) {
+
         # Change export status to finished because it is finished
         export_details$ExportStatus <- "Finished"
-        
+
         # exit while loop, and download file
         break
-        
-      } else if (last_update < startReqTime) {
-        # start export again if query did not go through for some reason
-        startExport <- POST(start_query, authenticate(user, password))
-        
-        # wait before making another request,
-        # where time is a function of the number of requests
-        Sys.sleep(5 * requestCounter)
-        # increment the counter of requests
-        requestCounter <- requestCounter + 1
+        } else if (last_update < start_time) {
+          # start export again if query did not go through for some reason
+          startExport <- POST(start_query, authenticate(user, password))
+
+          # wait before making another request,
+          # where time is a function of the number of requests
+
+          Sys.sleep(5 * requestCounter)
+          # increment the counter of requests
+          requestCounter <- requestCounter + 1
+        }
       }
     }
   }
