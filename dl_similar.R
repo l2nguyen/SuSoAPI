@@ -16,14 +16,15 @@
 # Each template will have its own zip file and folder
 #
 
-dl_similar <- function(server,
-                       user = "APIuser",  # API user ID
-                       password = "Password123",  # password
+dl_similar <- function(
                        pattern,  # Name of questionnaire (not template ID). Can use regex
                        exclude = NULL, # words to exclude, can be list
                        ignore.case = TRUE,  # to ignore case in filter
                        export_type = "tabular", # export type
-                       folder   # directory for data download
+                       folder,   # directory for data download
+                       server,
+                       user = "APIuser",  # API user ID
+                       password = "Password123"  # password
 )
 {
   source("dl_one.R")
@@ -54,16 +55,16 @@ dl_similar <- function(server,
     dl_list <- filter(dl_list, !(str_detect(Title, paste(exclude, collapse = "|"))))
   }
 
-  for (qnr in 1:nrow(dl_list)) {
+  for (qnr in seq_len(nrow(dl_list))) {
       # download all items in a list
       dl_one(
-        server,
-        user,
-        password,
         qx_name = dl_list$Title[qnr],
         version = dl_list$Version[qnr],
         export_type,
-        folder
+        folder,
+        server,
+        user,
+        password
       )
   }
 }
