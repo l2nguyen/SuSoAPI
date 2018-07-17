@@ -15,13 +15,15 @@
 # The exported data will be downloaded into the specified directory
 # It also unzips the downloaded file into the same directory
 
-dl_one <- function(server,  # server prefix
-                    user = "APIuser",  # API user ID
-                    password = "Password123",  # password
+dl_one <- function(
                     qx_name,  # Name of questionnaire (not template ID)
                     version = 1,  # version number
-                    export_type ="tabular", # export type
-                    folder)
+                    export_type = "tabular", # export type
+                    folder, 
+                    server,  # server prefix
+                    user = "APIuser",  # API user ID
+                    password = "Password123"  # password
+                    )
 {
   source("check_setup.R")
   source("get_details.R")
@@ -42,7 +44,10 @@ dl_one <- function(server,  # server prefix
   qx_name <- str_trim(qx_name)
   
   # Get ID of template to get export URL
-  template <- get_qx_id(server, qx_name, user, password)
+  template <- get_qx_id(qx_name,
+                        server = server,
+                        user = user,
+                        password = password)
   
   export_URL <- sprintf("%s/export/%s/%s$%i/", 
                         api_URL, export_type, template, version)
