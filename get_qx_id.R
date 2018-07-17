@@ -10,15 +10,23 @@
 # Returns:
 # The template ID associated with the name of the questionnaire
 
-get_qx_id <- function(server, 
-                    qx_name = "",
-                    user = "APIuser",
-                    password = "Password123")
+get_qx_id <- function(
+                    	qx_name = "",
+                    	ignore.case = TRUE,
+                    	server, 
+                    	user = "APIuser",
+                    	password = "Password123")
 {
   # require packages
   require("httr")
   require("jsonlite")
   require("dplyr")
+  require("stringr")
+
+  if (ignore.case) {
+    qx_name <- str_to_upper(str_trim(qx_name))
+    qnrList_all$Title <- str_to_upper(str_trim(qnrList_all$Title))
+  }
     
   # check if questionnaire is imported on server
   if (qx_name %in% qnrList_all$Title) {
