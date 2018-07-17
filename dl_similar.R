@@ -35,9 +35,6 @@ dl_similar <- function(
   library("httr")
   library("lubridate")
 
-  # First, get questionnaire information from server
-  get_qx(server, user, password)
-
   if (ignore.case) {
     pattern <- str_to_upper(str_trim(pattern))
     exclude <- str_to_upper(str_trim(exclude))
