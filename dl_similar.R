@@ -19,7 +19,6 @@
 dl_similar <- function(server,
                        user = "APIuser",  # API user ID
                        password = "Password123",  # password
-                       password = "Password123",  # password
                        pattern,  # Name of questionnaire (not template ID). Can use regex
                        exclude = NULL, # words to exclude, can be list
                        ignore.case = TRUE,  # to ignore case in filter
