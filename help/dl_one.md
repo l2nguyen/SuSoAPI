@@ -1,15 +1,15 @@
-### Export data from one template
+## Export data from one template
 
-#### Description
+### Description
 Exports data from a version of the specified questionnaire using the Survey Solutions API. The function check the status of the download 5 times and wait progressively longer every time it checks for the export to finish.
 
-#### Usage
+### Usage
 ```R
 dl_one(qx_name, version = 1, export_type = "tabular", folder, unzip = TRUE, 
 		server, user = "APIuser", password = "Password123")
 ```
 
-#### Arguments
+### Arguments
 * **qx_name**: Name of the template to download. This is the name of the template on the server and not the template ID.
 * **version**: Version number of the template to export data for. Default value is 1.
 * **export_type**: The type of data to export. Options are tabular, stata, spss, binary, paradata. Default is tabular.
