@@ -24,10 +24,18 @@ dl_allVers <- function(server,
   source("dl_one.R")
 
   # Required packages
-  require("stringr")
-  require("jsonlite")
-  require("httr")
-  require("lubridate")
+  # Load required packages
+  load_pkg <- function(x) {
+    if (!require(x, character.only = TRUE)) {
+      install.packages(x, repos = 'https://cloud.r-project.org/', dep = TRUE)
+    }
+    library(x, character.only = TRUE)
+  }
+
+  load_pkg('stringr')
+  load_pkg('jsonlite')
+  load_pkg('httr')
+  load_pkg('lubridate')
 
   # First, get questionnaire information from server
   get_qx(server, user, password)
@@ -41,13 +49,14 @@ dl_allVers <- function(server,
   # Export data for each version if more than one version
   for (i in allVers) {
     dl_one(
-      server,
-      user,
-      password,
-      qx_name,
+      qx_name = qx_name,
       version = i,
-      export_type,
-      folder
+      export_type = export_type,
+      folder = folder,
+      unzip = TRUE,
+      server = server,
+      user = user,
+      password = password
     )
   }
 }

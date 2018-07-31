@@ -30,10 +30,17 @@ dl_similar <- function(
   source("dl_one.R")
 
   # Load required packages
-  library("stringr")
-  library("jsonlite")
-  library("httr")
-  library("lubridate")
+  load_pkg <- function(x) {
+    if (!require(x, character.only = TRUE)) {
+      install.packages(x, repos = 'https://cloud.r-project.org/', dep = TRUE)
+    }
+    library(x, character.only = TRUE)
+  }
+
+  load_pkg('stringr')
+  load_pkg('jsonlite')
+  load_pkg('httr')
+  load_pkg('lubridate')
 
   if (ignore.case) {
     pattern <- str_to_upper(str_trim(pattern))
@@ -57,11 +64,12 @@ dl_similar <- function(
       dl_one(
         qx_name = dl_list$Title[qnr],
         version = dl_list$Version[qnr],
-        export_type,
-        folder,
-        server,
-        user,
-        password
+        export_type = export_type,
+        folder = folder,
+        unzip = TRUE,
+        server = server,
+        user = user,
+        password = password
       )
   }
 }
