@@ -25,16 +25,26 @@ dl_one <- function(
                     password = "Password123"  # password
                     )
 {
+  # -------------------------------------------------------------
+  # Load all necessary functions and require packages
+  # -------------------------------------------------------------
   source("check_setup.R")
   source("get_details.R")
   source("get_qx.R")
   source("get_qx_id.R")
   source("serverDetails.R")
 
-  require("stringr")
-  require("jsonlite")
-  require("httr")
-  require("lubridate")
+  load_pkg <- function(x) {
+    if (!require(x, character.only = TRUE)) {
+      install.packages(x, repos = 'https://cloud.r-project.org/', dep = TRUE)
+    }
+    library(x, character.only = TRUE)
+  }
+
+  load_pkg('stringr')
+  load_pkg('jsonlite')
+  load_pkg('httr')
+  load_pkg('lubridate')
 
   # build base URL for API
   api_URL <- sprintf("https://%s.mysurvey.solutions/api/v1",
