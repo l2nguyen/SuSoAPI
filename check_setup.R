@@ -17,16 +17,6 @@ check_setup <- function(server, api_user, password) {
 		stop("Update your version of R. Either download from CRAN or use the installr package.")
 	}
 
-	# packages needed for this program
-	packagesNeeded <- c("httr", "jsonlite", "stringr", "lubridate")
-
-	# identify and install those packages that are not already installed
-	packagesToInstall <- packagesNeeded[!(packagesNeeded %in% installed.packages()[,"Package"])]
-	if (length(packagesToInstall)) install.packages(packagesToInstall, quiet = TRUE)
-
-	# load all needed packages
-	invisible(lapply(packagesNeeded, library, character.only = TRUE))
-
 	# reinitialize error log
 	failedExportFile <- "dsets that failed to download.csv"
 	if ( file.exists(failedExportFile) ) {
@@ -49,6 +39,9 @@ check_setup <- function(server, api_user, password) {
 
 	# check that server, login, password, and data type are non-missing
 	for (x in c("server", "login", "password", "dataType")) {
+	  if (!is.character(get(x))) {
+	    stop("Check that the parameters in the data are the correct data type.")
+	  }
 	  if (nchar(get(x)) == 0) {
 		stop(paste("The following parameter is not specified in the program:", x))
 	  }
@@ -59,7 +52,7 @@ check_setup <- function(server, api_user, password) {
 	loginsOK <- GET(loginsToCheck, authenticate(api_user, password))
 
 	if (status_code(loginsOK) == 401) {
-		stop("The login and/or password provided are incorrect. Please correct in program parameters", "\n",
+		stop("The login and/or password provided are incorrect.", "\n",
 			"Login : ", api_user, "\n",
 			"Password : ", password, "\n"
 		)
@@ -67,8 +60,7 @@ check_setup <- function(server, api_user, password) {
 
 	# Check if it is a valid data type
 	if ((tolower(dataType) %in% c("tabular","stata","spss", "binary", "paradata")) == FALSE) {
-		stop("Specified data type is invalid.
-		     Please select one of the following: Tablular, STATA, SPSS, Binary, paradata")
+		stop("Data type has to be one of the following: Tablular, STATA, SPSS, Binary, paradata")
 	}
 
 	message("Check completed.")
