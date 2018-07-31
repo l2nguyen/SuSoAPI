@@ -6,7 +6,7 @@ Exports data from a version of the specified questionnaire using the Survey Solu
 ### Usage
 ```R
 dl_one(qx_name, version = 1, export_type = "tabular", folder, unzip = TRUE, 
-		server, user = "APIuser", password = "Password123")
+	server, user = "APIuser", password = "Password123")
 ```
 
 ### Arguments
@@ -16,5 +16,5 @@ dl_one(qx_name, version = 1, export_type = "tabular", folder, unzip = TRUE,
 * **folder**: The directory to export the data into. Must be a string. Use forward slash (/) instead of backslash (\).
 * **unzip**:  Option to unzip the export zip file after download into the same directory. It will unzip by default.
 * **server**: Prefix for the survey server. It is whatever comes before mysurvey.solutions: *[prefix]*.mysurvey.solutions.
-* **user**: Username for the API user on the server. [How to make API user](http://support.mysurvey.solutions/customer/en/portal/articles/2844104-survey-solutions-api?b_id=12728)
+* **user**: Username for the API user on the server. [Learn how to make API user](http://support.mysurvey.solutions/customer/en/portal/articles/2844104-survey-solutions-api?b_id=12728)
 * **password**: Password for the API user on the server.
