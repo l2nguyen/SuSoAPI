@@ -20,6 +20,7 @@ dl_one <- function(
                     version = 1,  # version number
                     export_type = "tabular", # export type
                     folder,
+                    unzip = TRUE, #option to unzip file after download
                     server,  # server prefix
                     user = "APIuser",  # API user ID
                     password = "Password123"  # password
@@ -133,7 +134,7 @@ dl_one <- function(
 
       # wait before making another request,
       # where time is a function of the number of requests
-      Sys.sleep(5 * requestCounter)
+      Sys.sleep(20 * requestCounter)
 
       requestCounter <- requestCounter + 1
     } else if (export_details$ExportStatus == "NotStarted") {
@@ -156,8 +157,7 @@ dl_one <- function(
 
           # wait before making another request,
           # where time is a function of the number of requests
-
-          Sys.sleep(5 * requestCounter)
+          Sys.sleep(20 * requestCounter)
           # increment the counter of requests
           requestCounter <- requestCounter + 1
         }
