@@ -1,19 +1,8 @@
 #---------------------------------------------#
 #------- EXPORT DATA FROM ONE TEMPLATE -------#
 #---------------------------------------------#
-# Args:
-# server: server prefix
-# user: API user ID, default is APIuser
-# password: password for API user, default is Password123
-# qx_name: Name of the questionnaire to download
-# version: version number of the data you would like to export
-# export type: the data type that you would like to export
-# options are tabular, stata, spss, binary, paradata
-# folder: the directory you would like to export the data into. Use '/' instead of '\'
-#
-# Returns:
-# The exported data will be downloaded into the specified directory
-# It also unzips the downloaded file into the same directory
+# For how to use, see:
+# https://github.com/l2nguyen/SuSoAPI/blob/master/help/dl_one.md
 
 dl_one <- function(
                     qx_name,  # Name of questionnaire (not template ID)
@@ -48,6 +37,8 @@ dl_one <- function(
   load_pkg('lubridate')
 
   # build base URL for API
+  server <- tolower(str_trim(server))
+
   api_URL <- sprintf("https://%s.mysurvey.solutions/api/v1",
                      server)
 
