@@ -22,6 +22,7 @@ dl_similar <- function(
                        ignore.case = TRUE,  # to ignore case in filter
                        export_type = "tabular", # export type
                        folder,   # directory for data download
+                       unzip = TRUE, # option to unzip after download
                        server,
                        user = "APIuser",  # API user ID
                        password = "Password123"  # password
@@ -41,6 +42,41 @@ dl_similar <- function(
   load_pkg('jsonlite')
   load_pkg('httr')
   load_pkg('lubridate')
+
+  # -------------------------------------------------------------
+  # check function inputs
+  # -------------------------------------------------------------
+
+  # check that server, login, password, and data type are non-missing
+  for (x in c("server", "login", "password", "export_type", "folder")) {
+    if (!is.character(get(x))) {
+      stop("Check that the parameters in the data are the correct data type.")
+    }
+    if (nchar(get(x)) == 0) {
+      stop(paste("The following parameter is not specified in the program:", x))
+    }
+  }
+
+  # Check if it is a valid data type
+  if ((tolower(export_type) %in% c("tabular", "stata", "spss", "binary", "paradata")) == FALSE) {
+    stop("Data type has to be one of the following: Tablular, STATA, SPSS, Binary, paradata")
+  }
+
+  # confirm that expected folders exist
+  if (!dir.exists(folder)) {
+    stop("Data folder does not exist in the expected location: ", folder)
+  }
+
+  # build base URL for API
+  api_URL <- sprintf("https://%s.mysurvey.solutions/api/v1",
+                     server)
+
+  # confirm that server exists
+  serverCheck <- try(http_error(api_URL), silent = TRUE)
+  if (class(serverCheck) == "try-error") {
+    stop("The following server does not exist. Check the server name:",
+         "\n", api_URL)
+  }
 
   if (ignore.case) {
     pattern <- str_to_upper(str_trim(pattern))
