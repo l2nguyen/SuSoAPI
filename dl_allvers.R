@@ -2,7 +2,13 @@
 #-------------- EXPORT ALL VERSIONS -----------------#
 #----------------------------------------------------#
 
+<<<<<<< HEAD
 dl_allVers <- function(
+=======
+dl_allVers <- function(server,
+                       user = "APIuser",  # API user ID
+                       password = "Password123",  # password
+>>>>>>> 0ec7ddd56212e9fa8057e8707543ecfbef08a9df
                        qx_name,  # Name of questionnaire (not template ID)
                        export_type = "tabular", # export type
                        ignore.case = TRUE,  # to ignore case in qx name
@@ -15,9 +21,13 @@ dl_allVers <- function(
 {
   source("dl_one.R")
 
+<<<<<<< HEAD
   # -------------------------------------------------------------
   # Load all necessary functions and require packages
   # -------------------------------------------------------------
+=======
+  # Load required packages
+>>>>>>> 0ec7ddd56212e9fa8057e8707543ecfbef08a9df
   load_pkg <- function(x) {
     if (!require(x, character.only = TRUE)) {
       install.packages(x, repos = 'https://cloud.r-project.org/', dep = TRUE)
