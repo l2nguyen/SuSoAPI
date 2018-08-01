@@ -1,30 +1,23 @@
 #----------------------------------------------------#
 #-------------- EXPORT ALL VERSIONS -----------------#
 #----------------------------------------------------#
-# Args:
-# server: server prefix
-# user: API user ID, default is API user
-# password: password for API user, default is Password 123
-# qx_name: Name of the questionnaire of interest
-# export type: the data type that you would like to export
-# options are tabular, stata, spss, binary, paradata
-# folder: the directory you would like to export the data into. Use '\\' instead of '\'
-#
-# Returns:
-# The exported data of all the versions. Each version will have its own zip file and folder
 
-dl_allVers <- function(server,
-                       user = "APIuser",  # API user ID
-                       password = "Password123",  # password
+dl_allVers <- function(
                        qx_name,  # Name of questionnaire (not template ID)
                        export_type = "tabular", # export type
-                       folder   # directory for data download
+                       ignore.case = TRUE,  # to ignore case in qx name
+                       folder,   # directory for data download
+                       unzip = TRUE, # whether to unzip or not
+                       server,
+                       user = "APIuser",  # API user ID
+                       password = "Password123"  # password
 )
 {
   source("dl_one.R")
 
-  # Required packages
-  # Load required packages
+  # -------------------------------------------------------------
+  # Load all necessary functions and require packages
+  # -------------------------------------------------------------
   load_pkg <- function(x) {
     if (!require(x, character.only = TRUE)) {
       install.packages(x, repos = 'https://cloud.r-project.org/', dep = TRUE)
@@ -37,11 +30,55 @@ dl_allVers <- function(server,
   load_pkg('httr')
   load_pkg('lubridate')
 
+  # -------------------------------------------------------------
+  # check function inputs
+  # -------------------------------------------------------------
+
+  # check that server, login, password, and data type are non-missing
+  for (x in c("server", "login", "password", "export_type", "folder")) {
+    if (!is.character(get(x))) {
+      stop("Check that the parameters in the data are the correct data type.")
+    }
+    if (nchar(get(x)) == 0) {
+      stop(paste("The following parameter is not specified in the program:", x))
+    }
+  }
+
+  # Check if it is a valid data type
+  if ((tolower(dataType) %in% c("tabular", "stata", "spss", "binary", "paradata")) == FALSE) {
+    stop("Data type has to be one of the following: Tablular, STATA, SPSS, Binary, paradata")
+  }
+
+  # confirm that expected folders exist
+  if (!dir.exists(folder)) {
+    stop("Data folder does not exist in the expected location: ", folder)
+  }
+
+  # build base URL for API
+  api_URL <- sprintf("https://%s.mysurvey.solutions/api/v1",
+                     server)
+
+  # confirm that server exists
+  serverCheck <- try(http_error(api_URL), silent = TRUE)
+  if (class(serverCheck) == "try-error") {
+    stop("The following server does not exist. Check the server name:",
+         "\n", api_URL)
+  }
+
+  # -------------------------------------------------------------
+  # Download data
+  # -------------------------------------------------------------
+
   # First, get questionnaire information from server
-  get_qx(server, user, password)
+  get_qx(server, user = user, password = password)
+
+  if (ignore.case) {
+    qx_name <- str_to_upper(str_trim(qx_name))
+    qnrList_all$Title <- str_to_upper(str_trim(qnrList_all$Title))
+  }
 
   # get template ID of provided template
-  template <- get_qx_id(server, str_trim(qx_name), user, password)
+  template <- get_qx_id(qx_name, server = server, user = user, password = password)
 
   # get all versions of the questionnaire on the server based on template ID
   allVers <- qnrList_all$Version[qnrList_all$QuestionnaireId == template]
