@@ -1,17 +1,6 @@
 #----------------------------------------------------#
 #-------------- EXPORT ALL VERSIONS -----------------#
 #----------------------------------------------------#
-# Args:
-# server: server prefix
-# user: API user ID, default is API user
-# password: password for API user, default is Password 123
-# qx_name: Name of the questionnaire of interest
-# export type: the data type that you would like to export
-# options are tabular, stata, spss, binary, paradata
-# folder: the directory you would like to export the data into. Use '\\' instead of '\'
-#
-# Returns:
-# The exported data of all the versions. Each version will have its own zip file and folder
 
 dl_allVers <- function(server,
                        user = "APIuser",  # API user ID
@@ -23,7 +12,6 @@ dl_allVers <- function(server,
 {
   source("dl_one.R")
 
-  # Required packages
   # Load required packages
   load_pkg <- function(x) {
     if (!require(x, character.only = TRUE)) {
