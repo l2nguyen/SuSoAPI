@@ -14,7 +14,7 @@ dl_one(qx_name, version = 1, export_type = "tabular", folder, unzip = TRUE,
 * **version** (*integer*): Version number of the template to export data for. Default value is 1.
 * **export_type** (*string*): The type of data to export. Options are tabular, stata, spss, binary, paradata. Default is tabular.
 * **folder** (*string*): The directory to export the data into. Must be a string. Use forward slash (/) instead of backslash (\\).
-* **unzip** (*boolean*):  Option to unzip the export zip file after download into the same directory. It will unzip by default. Set this parameter to *FALSE* if you would like to not unzip the exported data after download.
+* **unzip** (*boolean*):  Option to unzip the downloaded zip file into the same directory. By default, it will unzip. Set this parameter to *FALSE* if you would like to not unzip the exported data after download.
 * **server** (*string*): Prefix for the survey server. It is whatever comes before mysurvey.solutions: *[prefix]*.mysurvey.solutions.
 * **user** (*string*): Username for the API user on the server.
 * **password** (*string*): Password for the API user on the server.
