@@ -18,7 +18,7 @@ You can use the function in one of two ways:
 1. Run the R file for the function in R Studio by opening it and pressing **Ctrl+Shift+Enter**. This will run all the code for the function in the file and now the function will be in the working environment for use for this session.
 2. In the menu, go to **Code -> Source File...** or use the **Ctrl+Alt+G** keyboard shortcut. Select the function you would like to use and now it will be available for use in the working environment.
 
-####Server Details
+#### Server Details
 If you are using the functions to download the same type of data from the same server, you should make a serverDetails.R file to save time. Fill in this [template](serverDetails.R) with details on your server and login for the API user.
 
 ### Running R code in Stata

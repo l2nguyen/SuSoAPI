@@ -4,7 +4,7 @@
 # NOTE: Fill in this template with details for you own server before using.
 
 # details for accessing server
-server 		<- ""		    # first part of server address
+server    <- ""		    # first part of server address
 login 		<- ""		    # login of admin or API user
 password 	<- ""			# password of that user
 
