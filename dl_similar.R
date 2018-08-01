@@ -78,6 +78,14 @@ dl_similar <- function(
          "\n", api_URL)
   }
 
+  # -------------------------------------------------------------
+  # Download data
+  # -------------------------------------------------------------
+
+  # First, get questionnaire information from server
+  get_qx(server, user, password)
+
+  # case sensitivity option
   if (ignore.case) {
     pattern <- str_to_upper(str_trim(pattern))
     exclude <- str_to_upper(str_trim(exclude))
