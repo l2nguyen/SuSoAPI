@@ -110,12 +110,10 @@ dl_similar <- function(
         version = dl_list$Version[qnr],
         export_type = export_type,
         folder = folder,
-        unzip = TRUE,
+        unzip = unzip,
         server = server,
         user = user,
         password = password
       )
   }
 }
-
-
