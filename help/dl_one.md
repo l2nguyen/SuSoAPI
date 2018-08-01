@@ -21,7 +21,7 @@ dl_one(qx_name, version = 1, export_type = "tabular", folder, unzip = TRUE,
 
 
 ### Examples
-I have a survey that uses the cloud server *lf2018.mysurvey.solutions* for data collection. I want to use the API to export the data for **version 3** of a questionnaire called **LF Survey 2018**. I want the data in **Stata format** and I would like the data to be **unzipped after download**. I want to download the data into the folder: *C:/User/LF_Survey/Data/"*. On my server, I made an API user with the login: **APIuser2018** and password: **SafePassword123**. To use **dl_one** to download the data for that questionnaire, after loading the **dl_one** into the workspace, I would run the following code:
+I have a survey that uses the cloud server **lf2018.mysurvey.solutions** for data collection. I want to use the API to export the data for **version 3** of a questionnaire called **LF Survey 2018**. I want the data in **Stata format** and I would like the data to be **unzipped after download**. I want to download the data into the folder: **C:/User/LF_Survey/Data/"**. On my server, I made an API user with the login: **APIuser2018** and password: **SafePassword123**. To use **dl_one** to download the data for that questionnaire, after loading the **dl_one** into the workspace, I would run the following code:
 
 ```R
 dl_one(qx_name = "LF Survey 2018", version = 3, export_type = "stata", 
