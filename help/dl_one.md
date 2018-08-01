@@ -26,5 +26,5 @@ I have a survey that uses the cloud server *lf2018.mysurvey.solutions* for data 
 ```R
 dl_one(qx_name = "LF Survey 2018", version = 3, export_type = "stata", 
       folder = "C:/User/LF_Survey/Data/", unzip = TRUE, 
-	    server = "lf2018", user = "APIuser2018", password = "SafePassword123")
+      server = "lf2018", user = "APIuser2018", password = "SafePassword123")
 ```
