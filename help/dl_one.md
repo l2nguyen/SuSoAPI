@@ -10,14 +10,21 @@ dl_one(qx_name, version = 1, export_type = "tabular", folder, unzip = TRUE,
 ```
 
 ### Arguments
-* **qx_name** (*string*): Name of the template to download. This is the name of the template on the server and not the template ID.
+* **qx_name** (*string*): Name of the template to download. This is the name of the template on the server and not the template ID. Note that this is case sensitive.
 * **version** (*integer*): Version number of the template to export data for. Default value is 1.
 * **export_type** (*string*): The type of data to export. Options are tabular, stata, spss, binary, paradata. Default is tabular.
 * **folder** (*string*): The directory to export the data into. Must be a string. Use forward slash (/) instead of backslash (\\).
-* **unzip** (*boolean*):  Option to unzip the export zip file after download into the same directory. It will unzip by default.
+* **unzip** (*boolean*):  Option to unzip the export zip file after download into the same directory. It will unzip by default. Set this parameter to *FALSE* if you would like to not unzip the exported data after download.
 * **server** (*string*): Prefix for the survey server. It is whatever comes before mysurvey.solutions: *[prefix]*.mysurvey.solutions.
 * **user** (*string*): Username for the API user on the server.
 * **password** (*string*): Password for the API user on the server.
 
 
-### Example
+### Examples
+I have a survey that uses the cloud server *lf2018.mysurvey.solutions* for data collection. I want to use the API to export the data for version 3 of a questionnaire called **LF Survey 2018**. I want the data in Stata format and I would like the data to be unzipped after download. I want to download the data into the folder: *C:/User/LF_Survey/Data/"*. On my server, I made an API user with the login: **APIuser2018** and password: **SafePassword123**. To use **dl_one** to download the data for that questionnaire, after loading the **dl_one** into the workspace, I would run the following code:
+
+```R
+dl_one(qx_name = "LF Survey 2018", version = 3, export_type = "stata", 
+  folder = "C:/User/LF_Survey/Data/", unzip = TRUE, 
+	server = "lf2018", user = "APIuser2018", password = "SafePassword123")
+```
