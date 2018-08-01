@@ -1,20 +1,6 @@
 #-------------------------------------------------------#
 #------- DOWNLOAD ALL TEMPLATE WITH SIMILAR NAMES ------#
 #-------------------------------------------------------#
-# Args:
-# server: server prefix
-# user: API user ID, default is API user
-# password: password for API user, default is Password 123
-# pattern: the pattern that you would like to match. This can be the questionnaire name.
-# from.start: user can choose to start matching from the beginning or the end
-# export type: the data type that you would like to export
-# options are tabular, stata, spss, binary, paradata
-# folder: the directory you would like to export the data into. Use '/' instead of '\'
-#
-# Returns:
-# The exported data from all templates with similar names.
-# Each template will have its own zip file and folder
-#
 
 dl_similar <- function(
                        pattern,  # Name of questionnaire (not template ID). Can use regex
