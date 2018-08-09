@@ -1,7 +1,7 @@
 ## Export data from one template
 
 ### Description
-Returns a data frame called *qnrList_all* with information about all the questionnaires that are currently imported on the specified server. The data frame will have the following columns:
+Returns a data frame called *qnrList_all* with information about all the questionnaires that are currently imported on the specified server. The *qnrList_all* data frame will have the following columns:
 * **QuestionnaireId**: Unique ID for that template. Different versions of the same template should have the same QuestionnaireId.
 * **Version**: Version number of the questionnaire
 * **Title**: Name of the questionnaire
