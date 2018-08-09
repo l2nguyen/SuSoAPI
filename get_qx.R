@@ -39,9 +39,8 @@ get_qx <- function(server, user, password) {
     if (qnrList$TotalCount <= 40) {
       # if 40 questionnaires or less, then do not need to call again
       # Extract information about questionnaires on server
-      qnrList_all <- as.data.frame(qnrList$Questionnaires)
+      qnrList_all <<- as.data.frame(qnrList$Questionnaires)
 
-      assign("qnrList_all", qnrList_all, envir = .GlobalEnv)
     } else {
       # If more than 40 questions, run query again to get the rest
       data2 <- GET(query, authenticate(user, password),
@@ -49,10 +48,8 @@ get_qx <- function(server, user, password) {
 
       qnrList2 <- fromJSON(content(data2, as = "text"), flatten = TRUE)
 
-      qnrList_all <- rbind(qnrList_all,
+      qnrList_all <<- bind_rows(qnrList_all,
                            as.data.frame(qnrList2$Questionnaires))
-
-      assign("qnrList_all", qnrList_all, envir = .GlobalEnv)
     }
     } else if (status_code(data) == 401) {   # login error
     message("Incorrect username or password. Check login credentials for API user")
