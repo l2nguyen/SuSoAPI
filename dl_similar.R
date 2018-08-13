@@ -89,6 +89,10 @@ dl_similar <- function(
     dl_list <- filter(dl_list, !(str_detect(Title, paste(exclude, collapse = "|"))))
   }
 
+  if (nrow(dl_list) == 0) {
+    stop("Pattern and exclusion words did not result in any matches. Please check.")
+  }
+
   for (qnr in seq_len(nrow(dl_list))) {
       # download all items in a list
       dl_one(
