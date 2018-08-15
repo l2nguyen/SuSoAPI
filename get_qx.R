@@ -39,7 +39,8 @@ get_qx <- function(server, user, password) {
     if (qnrList$TotalCount <= 40) {
       # if 40 questionnaires or less, then do not need to call again
       # Extract information about questionnaires on server
-      qnrList_all <<- as.data.frame(qnrList$Questionnaires)
+      qnrList_all <<- as.data.frame(qnrList$Questionnaires) %>% arrange(Title, Version)
+
 
     } else {
       # If more than 40 questions, run query again to get the rest
