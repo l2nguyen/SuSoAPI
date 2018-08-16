@@ -34,7 +34,7 @@ dl_similar <- function(
   # -------------------------------------------------------------
 
   # check that server, login, password, and data type are non-missing
-  for (x in c("server", "login", "password", "export_type", "folder")) {
+  for (x in c("server", "user", "password", "export_type", "folder")) {
     if (!is.character(get(x))) {
       stop("Check that the parameters in the data are the correct data type.")
     }
