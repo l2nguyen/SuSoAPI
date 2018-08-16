@@ -2,7 +2,7 @@
 #------- DOWNLOAD ALL DATA FROM SERVER  ------#
 #---------------------------------------------#
 
-dl_similar <- function(
+dl_everything <- function(
   export_type = "tabular", # export type
   folder,   # directory for data download
   unzip = TRUE,
