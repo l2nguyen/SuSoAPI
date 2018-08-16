@@ -12,7 +12,6 @@ dl_everything <- function(
 )
 {
   source("dl_one.R")
-  source("./helpers/get_qx.R")
 
   # -------------------------------------------------------------
   # Load all necessary functions and require packages
