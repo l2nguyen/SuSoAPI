@@ -4,8 +4,8 @@
 
 dl_allVers <- function(
                        qx_name,  # Name of questionnaire (not template ID)
-                       export_type = "tabular", # export type
                        ignore.case = TRUE,  # to ignore case in qx name
+                       export_type = "tabular", # export type
                        folder,   # directory for data download
                        unzip = TRUE, # whether to unzip or not
                        server,
