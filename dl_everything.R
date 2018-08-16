@@ -3,13 +3,13 @@
 #---------------------------------------------#
 
 dl_everything <- function(
-  export_type = "tabular", # export type
-  folder,   # directory for data download
-  unzip = TRUE,
-  server,
-  user = "APIuser",  # API user ID
-  password = "Password123"  # password
-)
+                          export_type = "tabular", # export type
+                          folder,   # directory for data download
+                          unzip = TRUE,
+                          server,
+                          user = "APIuser",  # API user ID
+                          password = "Password123"  # password
+                          )
 {
   source("dl_one.R")
 
