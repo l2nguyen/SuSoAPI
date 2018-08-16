@@ -31,7 +31,7 @@ This packages allows R and Stata to interact and exchange data so it is possible
 
 ## Description of functions currently available:
 * [dl_one](dl_one.R): Downloads the data for the specified version for the specified questionnaire.  [How to use.](help/dl_one.md)
-* [dl_allVers](dl_allvers.R): Downloads all versions of the specified questionnaire.
+* [dl_allVers](dl_allvers.R): Downloads all versions of the specified questionnaire. (help/dl_allvers.md)
 * [dl_similar](dl_similar.R): Downloads the data for all questionnaire that matches a specified pattern. Can use regex patterns. [How to use.](help/dl_similar.md)
 * [get_qx](get_qx.R): Gets information about all the questionnaires imported on the server.  [How to use.](help/get_qx.md)
 * [get_qx_id](get_qx_id.R): Returns the template ID of the specified questionnaire.
