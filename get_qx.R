@@ -50,8 +50,9 @@ get_qx <- function(server, user, password) {
       qnrList2 <- fromJSON(content(data2, as = "text"), flatten = TRUE)
 
       qnrList_all <<- bind_rows(qnrList_all,
-                           as.data.frame(qnrList2$Questionnaires))
+                           as.data.frame(qnrList2$Questionnaires)) %>% arrange(Title, Version)
     }
+
     } else if (status_code(data) == 401) {   # login error
     message("Incorrect username or password. Check login credentials for API user")
       } else {
