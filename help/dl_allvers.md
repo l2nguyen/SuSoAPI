@@ -25,20 +25,20 @@ dl_allVers(qx_name, ignore.case = TRUE,
 I have a survey that uses the cloud server **lf2018.mysurvey.solutions** for data collection. I want to use the API to export the data for *all the versions* of my questionnaire called **LF Survey 2018**. I want the data in **Stata format** and I would like the data to be **unzipped after download**. I want to download the data into the folder: **C:/User/LF_Survey/Data/"**. On my server, I made an API user with the login: **APIuser2018** and password: **SafePassword123**. To use **dl_allVers** to download the data for that questionnaire, after loading the **dl_allVers** function into the workspace, I would run the following code:
 
 ```R
-dl_allvers(qx_name = "LF Survey 2018", ignore.case = TRUE, export_type = "stata", 
+dl_allVers(qx_name = "LF Survey 2018", ignore.case = TRUE, export_type = "stata", 
       folder = "C:/User/LF_Survey/Data/", unzip = TRUE, 
       server = "lf2018", user = "APIuser2018", password = "SafePassword123")
 ```
 
 Since I set the ignore.case parameter to be TRUE for the function, the questionnaire name is not case sensitive so I do not have to capitalize the questionnaire name exactly as it appears on the server. The following code will also work:
 ```R
-dl_allvers(qx_name = "LF SURVEY 2018", ignore.case = TRUE, export_type = "stata", 
+dl_allVers(qx_name = "LF SURVEY 2018", ignore.case = TRUE, export_type = "stata", 
       folder = "C:/User/LF_Survey/Data/", unzip = TRUE, 
       server = "lf2018", user = "APIuser2018", password = "SafePassword123")
 ```
 
 ```R
-dl_allvers(qx_name = "lf survey 2018", ignore.case = TRUE, export_type = "stata", 
+dl_allVers(qx_name = "lf survey 2018", ignore.case = TRUE, export_type = "stata", 
       folder = "C:/User/LF_Survey/Data/", unzip = TRUE, 
       server = "lf2018", user = "APIuser2018", password = "SafePassword123")
 ```
