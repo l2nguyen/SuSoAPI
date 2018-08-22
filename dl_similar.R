@@ -3,8 +3,8 @@
 #-------------------------------------------------------#
 
 dl_similar <- function(
-                       pattern,  # Name of questionnaire (not template ID). Can use regex
-                       exclude = NULL, # words to exclude, can be list
+                       pattern,  # pattern to search for. Can use regex. can be vector of strings
+                       exclude = NULL, # words to exclude, can be vector of strings
                        ignore.case = TRUE,  # to ignore case in filter
                        export_type = "tabular", # export type
                        folder,   # directory for data download
@@ -79,7 +79,12 @@ dl_similar <- function(
   }
 
   # make initial download list based on pattern
-  dl_list <- filter(qnrList_all, str_detect(Title, pattern))
+  if (length(pattern) == 1) {
+    dl_list <- filter(qnrList_all, str_detect(Title, pattern))
+  }
+  if (length(pattern) > 1) {
+    dl_list <- filter(qnrList_all, str_detect(Title, paste(pattern, collapse = "|")))
+  }
 
   # filter download list to exclude titlesi n the list of words to exclude
   if (length(exclude) == 1) {
@@ -90,7 +95,7 @@ dl_similar <- function(
   }
 
   if (nrow(dl_list) == 0) {
-    stop("Pattern and exclusion words did not result in any matches. Please check.")
+    stop("Pattern and exclusion words did not result in any matches.")
   }
 
   for (qnr in seq_len(nrow(dl_list))) {
