@@ -105,7 +105,7 @@ dl_one <- function(
 
   # If server is still working on generating export data, wait and then check status again
   while (export_details$ExportStatus %in% c("NotStarted", "Queued", "Running")
-         & requestCounter <= 5) {
+         & requestCounter <= 10) {
     # Wait 10 seconds
     Sys.sleep(10)
 
@@ -117,9 +117,12 @@ dl_one <- function(
     last_update <- export_details$LastUpdateDate
 
 
-    # for debugging purposes
+    # for display purposes
     message(paste0("Request number: ", requestCounter))
     message(paste0("Status: ", export_details$ExportStatus))
+    if (export_details$ExportStatus == "Running") {
+      message(paste0("Percent: ", export_details$RunningProcess['ProgressInPercents'], '%'))
+    }
 
     # If running or queued, keep waiting and check status again
     if (export_details$ExportStatus %in% c("Queued","Running")) {
@@ -160,11 +163,12 @@ dl_one <- function(
   # If export is file is finished being produced, download data file
   if (export_details$ExportStatus == "Finished") {
     # Set folder to directory specified by user
-    # concatenate file name
+    # concatenate file name - the name matches the name of a manual download
     zip_path <- paste0(folder,"/",
                        qx_name, "_",
-                       "v", version, "_",
-                       export_type)
+                       version, "_",
+                       str_to_upper(export_type), "_",
+                       "All")
 
     # name of zip file
     zip_name <- paste0(zip_path,".zip")
