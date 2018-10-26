@@ -116,10 +116,10 @@ dl_one <- function(
     # get time of last update
     last_update <- export_details$LastUpdateDate
 
-
     # for display purposes
     message(paste0("Request number: ", requestCounter))
     message(paste0("Status: ", export_details$ExportStatus))
+
     if (export_details$ExportStatus == "Running") {
       message(paste0("Percent: ", export_details$RunningProcess['ProgressInPercents'], '%'))
     }

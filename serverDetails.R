@@ -4,9 +4,9 @@
 # NOTE: Fill in this template with details for you own server before using.
 
 # details for accessing server
-server    <- ""		    # first part of server address
-login 		<- ""		    # login of admin or API user
-password 	<- ""			# password of that user
+server    <- "nlss"		    # first part of server address
+login 		<- "APIuser"		    # login of admin or API user
+password 	<- "NLSSApi1234!"			# password of that user
 
 # data type - only fill this in if you are downloading one type of data a lot
 dataType <- "stata"			# possible (relevant) values (not case sensitive):
