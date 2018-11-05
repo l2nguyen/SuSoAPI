@@ -14,6 +14,7 @@ dl_allVers <- function(
                        password = "Password123"  # password
 )
 {
+  source("get_qx_id.R")
   source("dl_one.R")
 
   # -------------------------------------------------------------
@@ -47,7 +48,7 @@ dl_allVers <- function(
   }
 
   # Check if it is a valid data type
-  if ((tolower(dataType) %in% c("tabular", "stata", "spss", "binary", "paradata")) == FALSE) {
+  if ((tolower(export_type) %in% c("tabular", "stata", "spss", "binary", "paradata")) == FALSE) {
     stop("Data type has to be one of the following: Tablular, STATA, SPSS, Binary, paradata")
   }
 
@@ -87,7 +88,7 @@ dl_allVers <- function(
 
   # keep certain versions only if keep vector is selected
   if (length(keep) > 0) {
-    allVers <- allVers[Version %in% keep]
+    allVers <- allVers[allVers %in% keep]
   }
 
   # Export data for each version if more than one version
