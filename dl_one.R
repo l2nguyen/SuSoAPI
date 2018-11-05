@@ -48,6 +48,13 @@ dl_one <- function(
     get_qx(server, user = user, password = password)
   }
 
+  # check version number is numeric
+  if (!is.numeric(version)) {
+    if (is.na(as.numeric(version))) {
+      stop("Version number ", version, " is not numeric.")
+    } else version <- as.numeric(version)
+  }
+
   # trim white space before
   qx_name <- str_trim(qx_name)
 
