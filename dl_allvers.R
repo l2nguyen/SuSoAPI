@@ -4,6 +4,7 @@
 
 dl_allVers <- function(
                        qx_name,  # Name of questionnaire (not template ID)
+                       keep = NULL,
                        ignore.case = TRUE,  # to ignore case in qx name
                        export_type = "tabular", # export type
                        folder,   # directory for data download
@@ -83,6 +84,11 @@ dl_allVers <- function(
 
   # get all versions of the questionnaire on the server based on template ID
   allVers <- qnrList_all$Version[qnrList_all$QuestionnaireId == template]
+
+  # keep certain versions only if keep vector is selected
+  if (length(keep) > 0)) {
+    allVers <- allVers[Version %in% keep]
+  }
 
   # Export data for each version if more than one version
   for (i in allVers) {
