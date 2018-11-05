@@ -81,19 +81,16 @@ dl_similar <- function(
   # make initial download list based on pattern
   if (length(pattern) == 1) {
     dl_list <- filter(qnrList_all, str_detect(Title, pattern))
-  }
-  if (length(pattern) > 1) {
+  } else if (length(pattern) > 1) {
     dl_list <- filter(qnrList_all, str_detect(Title, paste(pattern, collapse = "|")))
-  }
-  else {
+  } else {
     stop("Pattern not specified.")
   }
 
   # filter download list to exclude titlesi n the list of words to exclude
   if (length(exclude) == 1) {
     dl_list <- filter(dl_list, !(str_detect(Title, exclude)))
-  }
-  if (length(exclude) > 1) {
+  } else if (length(exclude) > 1) {
     dl_list <- filter(dl_list, !(str_detect(Title, paste(exclude, collapse = "|"))))
   }
 
