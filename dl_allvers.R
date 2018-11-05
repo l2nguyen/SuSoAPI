@@ -57,11 +57,6 @@ dl_allVers <- function(
     stop("Data folder does not exist in the expected location: ", folder)
   }
 
-  # check that keep vector is a numeric one
-  if (!is.numeric(keep)) {
-    stop("Ensure there are only numbers in the list of versions to keep ", keep)
-  }
-
   # build base URL for API
   api_URL <- sprintf("https://%s.mysurvey.solutions/api/v1",
                      server)
