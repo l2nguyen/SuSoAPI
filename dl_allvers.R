@@ -86,7 +86,7 @@ dl_allVers <- function(
   allVers <- qnrList_all$Version[qnrList_all$QuestionnaireId == template]
 
   # keep certain versions only if keep vector is selected
-  if (length(keep) > 0)) {
+  if (length(keep) > 0) {
     allVers <- allVers[Version %in% keep]
   }
 
