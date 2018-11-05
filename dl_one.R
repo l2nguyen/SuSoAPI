@@ -80,7 +80,9 @@ dl_one <- function(
 
   if (status_code(startExport) == 200) {   #if request was posted sucessfully
     # Display message that the exporting process is starting
-    message("Requesting data sets to be compiled on server...")
+    message("Requesting data for ",
+            qx_name, " v", version,
+            " to be compiled on server.")
 
     # wait 1 second between start request and status request
     Sys.sleep(1)
@@ -108,7 +110,6 @@ dl_one <- function(
          & requestCounter <= 10) {
     # Wait 10 seconds
     Sys.sleep(10)
-
 
     # Check details again
     get_details(export_URL, user, password)
