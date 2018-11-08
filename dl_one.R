@@ -198,9 +198,8 @@ dl_one <- function(
       unzip(zip_name,exdir = zip_path)
       message("Data files successfully downloaded into folder: ", "\n", zip_path)
     } else {
-      failureDesc	= paste0("Problem dowloading. Server status code: ", status_code(downloadData))
+      failureDesc	= paste0("Problem downloading. Server status code: ", status_code(downloadData))
     }
-
   }
 
   # if finished with errors - try again
