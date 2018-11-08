@@ -5,6 +5,7 @@
 dl_allVers <- function(
                        qx_name,  # Name of questionnaire (not template ID)
                        keep = NULL,
+                       drop = NULL,
                        ignore.case = TRUE,  # to ignore case in qx name
                        export_type = "tabular", # export type
                        folder,   # directory for data download
@@ -68,6 +69,11 @@ dl_allVers <- function(
          "\n", api_URL)
   }
 
+  # check that user did not specify both drop and keep
+  if (!is.null(keep) && !is.null(drop)) {
+    stop("Specify keep or drop. Do not specify both.")
+  }
+
   # -------------------------------------------------------------
   # Download data
   # -------------------------------------------------------------
@@ -85,6 +91,11 @@ dl_allVers <- function(
 
   # get all versions of the questionnaire on the server based on template ID
   allVers <- qnrList_all$Version[qnrList_all$QuestionnaireId == template]
+
+  # drop certain versions only if drop vector is specified
+  if (!is.null(drop)) {
+    allVers <- allVers[!(allVers %in% drop)]
+  }
 
   # keep certain versions only if keep vector is specified
   if (!is.null(keep)) {
