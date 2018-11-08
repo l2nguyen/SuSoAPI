@@ -113,7 +113,8 @@ dl_one <- function(
   requestCounter <- 1
 
   # If server is still working on generating export data, wait and then check status again
-  while (export_details$ExportStatus %in% c("NotStarted", "Queued", "Running")
+  while (export_details$ExportStatus %in%
+         c("NotStarted", "Queued", "Running","Compressing")
          & requestCounter <= 10) {
     # Wait 10 seconds
     Sys.sleep(10)
@@ -133,7 +134,7 @@ dl_one <- function(
     }
 
     # If running or queued, keep waiting and check status again
-    if (export_details$ExportStatus %in% c("Queued","Running")) {
+    if (export_details$ExportStatus %in% c("Queued","Running","Compressing")) {
 
       # wait before making another request,
       # where time is a function of the number of requests
