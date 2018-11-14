@@ -138,12 +138,12 @@ dl_one <- function(
 
       # wait before making another request,
       # where time is a function of the number of requests
-      Sys.sleep(20 * requestCounter)
+      Sys.sleep(10 * requestCounter)
 
       requestCounter <- requestCounter + 1
     } else if (export_details$ExportStatus == "NotStarted") {
 
-      # check if exported file has already finished and export file now exists
+            # check if exported file has already finished and export file now exists
       # NOTE: Tabular data files generate so quickly that the server has reverted
       # back to "Not Started" status by the time we check for details.
       if (export_details$HasExportedFile == TRUE) {
@@ -173,6 +173,7 @@ dl_one <- function(
   if (export_details$ExportStatus == "Finished") {
     # Set folder to directory specified by user
     # concatenate file name - the name matches the name of a manual download
+
     zip_path <- paste0(folder,"/",
                        qx_name, "_",
                        version, "_",
@@ -198,7 +199,8 @@ dl_one <- function(
       unzip(zip_name,exdir = zip_path)
       message("Data files successfully downloaded into folder: ", "\n", zip_path)
     } else {
-      failureDesc	= paste0("Problem downloading. Server status code: ", status_code(downloadData))
+      message(paste0("Problem downloading data. Server status code: ",
+                     status_code(downloadData)))
     }
   }
 
