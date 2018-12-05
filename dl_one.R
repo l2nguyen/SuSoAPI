@@ -64,14 +64,14 @@ dl_one <- function(
                         user = user,
                         password = password)
 
-  export_URL <- sprintf("%s/export/%s/%s$%i/",
+  export_URL <- sprintf("%s/export/%s/%s$%i",
                         api_URL, export_type, template, version)
 
   # -----------------------------------------------------------------------------
   # Request export files to be created
   # -----------------------------------------------------------------------------
   # post request to API
-  start_query <- paste0(export_URL, "start")
+  start_query <- paste0(export_URL, "/start")
 
   startExport <- POST(start_query, authenticate(user, password))
 

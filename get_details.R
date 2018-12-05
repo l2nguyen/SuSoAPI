@@ -23,9 +23,9 @@ get_details <- function(export_URL,
   require("lubridate")
 
   #-- GET EXPORT STATUS DETAILS --#
-  
+
   # Make URL for details
-  details_query <- paste0(export_URL, "details")
+  details_query <- paste0(export_URL, "/details")
 
   # Get status of export from server
   statusExport <- GET(details_query, authenticate(user, password))
