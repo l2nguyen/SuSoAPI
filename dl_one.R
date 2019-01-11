@@ -18,12 +18,6 @@ dl_one <- function(
   # -------------------------------------------------------------
   # Load all necessary functions and require packages
   # -------------------------------------------------------------
-  source("check_setup.R")
-  source("get_details.R")
-  source("get_qx.R")
-  source("get_qx_id.R")
-
-  if (file.exists("serverDetails.R")) source("serverDetails.R")
 
   load_pkg <- function(x) {
     if (!require(x, character.only = TRUE)) {
@@ -36,6 +30,16 @@ dl_one <- function(
   load_pkg('jsonlite')
   load_pkg('httr')
   load_pkg('lubridate')
+  load_pkg('here')
+
+  source(here("check_setup.R"))
+  source(here("get_details.R"))
+  source(here("get_qx.R"))
+  source(here("get_qx_id.R"))
+
+  # -------------------------------------------------------------
+  # Get list of questionnaires from server
+  # -------------------------------------------------------------
 
   # build base URL for API
   server <- tolower(str_trim(server))
@@ -64,12 +68,13 @@ dl_one <- function(
                         user = user,
                         password = password)
 
-  export_URL <- sprintf("%s/export/%s/%s$%i",
-                        api_URL, export_type, template, version)
-
   # -----------------------------------------------------------------------------
   # Request export files to be created
   # -----------------------------------------------------------------------------
+
+  export_URL <- sprintf("%s/export/%s/%s$%i",
+                        api_URL, export_type, template, version)
+
   # post request to API
   start_query <- paste0(export_URL, "/start")
 
@@ -130,7 +135,8 @@ dl_one <- function(
     message(paste0("Status: ", export_details$ExportStatus))
 
     if (export_details$ExportStatus == "Running") {
-      message(paste0("Percent: ", export_details$RunningProcess['ProgressInPercents'], '%'))
+      message(paste0("Percent: ",
+                     export_details$RunningProcess['ProgressInPercents'], '%'))
     }
 
     # If running or queued, keep waiting and check status again
@@ -143,18 +149,18 @@ dl_one <- function(
       requestCounter <- requestCounter + 1
     } else if (export_details$ExportStatus == "NotStarted") {
 
-            # check if exported file has already finished and export file now exists
+      # check if exported file has already finished and export file now exists
       # NOTE: Tabular data files generate so quickly that the server has reverted
       # back to "Not Started" status by the time we check for details.
       if (export_details$HasExportedFile == TRUE) {
         # if last update is after request, then file is ready to download
         if (is.null(last_update) == TRUE | last_update >= start_time) {
 
-        # Change export status to finished because it is finished
-        export_details$ExportStatus <- "Finished"
+          # Change export status to finished because it is finished
+          export_details$ExportStatus <- "Finished"
 
-        # exit while loop, and download file
-        break
+          # exit while loop, and download file
+          break
         } else if (last_update < start_time) {
           # start export again if query did not go through for some reason
           startExport <- POST(start_query, authenticate(user, password))
@@ -184,19 +190,29 @@ dl_one <- function(
     zip_name <- paste0(zip_path,".zip")
 
     # Query to download data
-    downloadData <- GET(
+    downloadReq <- GET(
       export_URL,
       authenticate(user, password)
     )
 
-    if (status_code(downloadData) == 200) {
+    # check status code of query
+    if (status_code(downloadReq) >= 300 & status_code(downloadReq) <= 400) {
+      downloadData <- GET(downloadReq$url)
+    } else {
+      message(paste0("Problem downloading data. Server status code: ",
+                     status_code(downloadData)))
+    }
 
+    if (status_code(downloadData) == 200) {
       bin <- content(downloadData,"raw")
       # write content to the zip file
       writeBin(bin, zip_name)
       message("Sucessfully exported ", qx_name, " version ", version)
 
-      unzip(zip_name,exdir = zip_path)
+      # unzip
+      if (unzip == TRUE) {
+        unzip(zip_name,exdir = zip_path)
+      }
       message("Data files successfully downloaded into folder: ", "\n", zip_path)
     } else {
       message(paste0("Problem downloading data. Server status code: ",
