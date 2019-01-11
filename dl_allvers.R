@@ -15,13 +15,10 @@ dl_allVers <- function(
                        password = "Password123"  # password
 )
 {
-  source("get_qx_id.R")
-  source("dl_one.R")
 
   # -------------------------------------------------------------
   # Load all necessary functions and require packages
   # -------------------------------------------------------------
-
   load_pkg <- function(x) {
     if (!require(x, character.only = TRUE)) {
       install.packages(x, repos = 'https://cloud.r-project.org/', dep = TRUE)
@@ -33,6 +30,10 @@ dl_allVers <- function(
   load_pkg('jsonlite')
   load_pkg('httr')
   load_pkg('lubridate')
+  load_pkg('here')
+
+  source(here("get_qx_id.R"))
+  source(here("dl_one.R"))
 
   # -------------------------------------------------------------
   # check function inputs

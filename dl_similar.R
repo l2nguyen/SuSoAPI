@@ -14,8 +14,6 @@ dl_similar <- function(
                        password = "Password123"  # password
 )
 {
-  source("dl_one.R")
-
   # Load required packages
   load_pkg <- function(x) {
     if (!require(x, character.only = TRUE)) {
@@ -28,6 +26,9 @@ dl_similar <- function(
   load_pkg('jsonlite')
   load_pkg('httr')
   load_pkg('lubridate')
+  load_pkg('here')
+
+  source(here("dl_one.R"))
 
   # -------------------------------------------------------------
   # check function inputs

@@ -11,7 +11,6 @@ dl_everything <- function(
                           password = "Password123"  # password
                           )
 {
-  source("dl_one.R")
 
   # -------------------------------------------------------------
   # Load all necessary functions and require packages
@@ -27,6 +26,10 @@ dl_everything <- function(
   load_pkg('jsonlite')
   load_pkg('httr')
   load_pkg('lubridate')
+  load_pkg('here')
+
+  # source download one function
+  source(here("dl_one.R"))
 
   # -------------------------------------------------------------
   # check function inputs
