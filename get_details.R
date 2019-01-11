@@ -16,11 +16,18 @@ get_details <- function(export_URL,
                         password,
                         attempt = 1) {
 
-  # require packages
-  require("httr")
-  require("jsonlite")
-  require("dplyr")
-  require("lubridate")
+  load_pkg <- function(x) {
+    if (!require(x, character.only = TRUE)) {
+      install.packages(x, repos = 'https://cloud.r-project.org/', dep = TRUE)
+    }
+    library(x, character.only = TRUE)
+  }
+
+  # load packages
+  load_pkg("httr")
+  load_pkg("jsonlite")
+  load_pkg("dplyr")
+  load_pkg("lubridate")
 
   #-- GET EXPORT STATUS DETAILS --#
 

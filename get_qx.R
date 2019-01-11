@@ -14,17 +14,25 @@
 # questionnaires on the server. This is a prettified version of the JSON response.
 
 get_qx <- function(server, user, password) {
+
+  load_pkg <- function(x) {
+    if (!require(x, character.only = TRUE)) {
+      install.packages(x, repos = 'https://cloud.r-project.org/', dep = TRUE)
+    }
+    library(x, character.only = TRUE)
+  }
+
   # require packages
-  require("httr")
-  require("jsonlite")
-  require("dplyr")
+  load_pkg("httr")
+  load_pkg("jsonlite")
+  load_pkg("dplyr")
 
   # build base URL for API
-  API_URL <- sprintf("https://%s.mysurvey.solutions/api/v1/",
+  API_URL <- sprintf("https://%s.mysurvey.solutions/api/v1",
                      server)
 
   # build query
-  query <- paste0(API_URL, "questionnaires")
+  query <- paste0(API_URL, "/questionnaires")
 
   # Send GET request to API
   data <- GET(query, authenticate(user, password),
