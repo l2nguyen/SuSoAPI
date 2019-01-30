@@ -49,11 +49,10 @@ get_qx <- function(server, user, password) {
       # Extract information about questionnaires on server
       qnrList_all <- as.data.frame(qnrList$Questionnaires) %>% arrange(Title, Version)
 
-
     } else {
       # If more than 40 questionnaires, run query again to get the rest
-      qnrList_all <- as.data.frame(qnrList$Questionnaires) %>% arrange(Title, Version)
-      
+      qnrList_all <- as.data.frame(qnrList$Questionnaires)
+
       data2 <- GET(query, authenticate(user, password),
                   query = list(limit = 40, offset = 2))
 
@@ -66,7 +65,7 @@ get_qx <- function(server, user, password) {
     } else if (status_code(data) == 401) {   # login error
     message("Incorrect username or password. Check login credentials for API user")
       } else {
-    #
+    # Issue error message
     message("Encountered issue with status code ", status_code(data))
       }
 }
