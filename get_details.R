@@ -13,8 +13,7 @@
 
 get_details <- function(export_URL,
                         user,
-                        password,
-                        attempt = 1) {
+                        password) {
 
   load_pkg <- function(x) {
     if (!require(x, character.only = TRUE)) {
