@@ -1,7 +1,7 @@
 #------------------------------------------------------------------------#
 #-------- GET THE TEMPLATE ID TO THE PROVIDED QUESTIONNAIRE NAME --------#
 #------------------------------------------------------------------------#
-# Args: 
+# Args:
 # server: server prefix
 # Qxname: Name of the questionnaire of interst
 # user: API user ID, default is API user
@@ -13,7 +13,7 @@
 get_qx_id <- function(
                     	qx_name = "",
                     	ignore.case = TRUE,
-                    	server, 
+                    	server,
                     	user = "APIuser",
                     	password = "Password123")
 {
@@ -27,7 +27,7 @@ get_qx_id <- function(
     qx_name <- str_to_upper(str_trim(qx_name))
     qnrList_all$Title <- str_to_upper(str_trim(qnrList_all$Title))
   }
-    
+
   # check if questionnaire is imported on server
   if (qx_name %in% qnrList_all$Title) {
     # return ID associated with questionnaire name
@@ -35,8 +35,7 @@ get_qx_id <- function(
   } else if (qx_name == "") {
     # give error
     stop("Error: Please provide the name of the questionnaire.")
-  }
-  else {
+  } else {
     stop("Error: Please check the questionnaire name.")
   }
 }
