@@ -81,7 +81,15 @@ dl_one <- function(
   startExport <- POST(start_query, authenticate(user, password))
 
   # Get start time of export
-  start_time <- as.POSIXct(startExport$date, format = "%a, %d %b %Y %H:%M:%S", tz = "GMT")
+  # Get start time of export
+  if (is.na(headers(startExport)$date)) {
+    # take the date in case the response header is missing
+    start_time <- as.POSIXct(startExport$date,
+                             format = "%d %b %Y %H:%M:%S", tz = "GMT")
+  } else {
+    start_time <- as.POSIXct(headers(startExport)$date,
+                             format = "%a, %d %b %Y %H:%M:%S", tz = "GMT")
+  }
 
   # convert start time into UTC for standardization with server response time
   start_time <- with_tz(start_time, "UTC")
