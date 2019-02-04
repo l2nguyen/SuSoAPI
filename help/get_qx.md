@@ -7,6 +7,8 @@ Returns a data frame called *qnrList_all* with information about all the questio
 * **Title**: Name of the questionnaire
 * **LastEntryDate**: Time the questionnaire was imported into the server in UTC.
 
+**NOTE**: *qnrList_all* is currently being assigned to the global environment so that data can be accessed when get_qx function is nested in other functions. This might cause issues if you are trying to use the *dl_one* function across different servers.
+
 ### Usage
 ```R
 get_qx(server, user, password)
