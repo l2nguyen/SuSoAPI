@@ -11,7 +11,8 @@ dl_similar <- function(
                        unzip = TRUE, # option to unzip after download
                        server,
                        user = "APIuser",  # API user ID
-                       password = "Password123"  # password
+                       password = "Password123",  # password
+                       tries = 10
 )
 {
   # Load required packages
@@ -111,7 +112,8 @@ dl_similar <- function(
         unzip = unzip,
         server = server,
         user = user,
-        password = password
+        password = password,
+        tries = tries
       )
   }
 }

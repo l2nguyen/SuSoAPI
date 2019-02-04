@@ -12,7 +12,8 @@ dl_allVers <- function(
                        unzip = TRUE, # whether to unzip or not
                        server,
                        user = "APIuser",  # API user ID
-                       password = "Password123"  # password
+                       password = "Password123",  # password
+                       tries = 10 # number of times to check for export
 )
 {
 
@@ -113,7 +114,8 @@ dl_allVers <- function(
       unzip = unzip,
       server = server,
       user = user,
-      password = password
+      password = password,
+      tries = tries
     )
   }
 }
