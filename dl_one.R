@@ -35,7 +35,6 @@ dl_one <- function(
   source(here("check_setup.R"))
   source(here("get_details.R"))
   source(here("get_qx.R"))
-  source(here("get_qx_id.R"))
 
   # -------------------------------------------------------------
   # Get list of questionnaires from server
@@ -63,17 +62,20 @@ dl_one <- function(
   qx_name <- str_trim(qx_name)
 
   # Get ID of template to get export URL
-  template <- get_qx_id(qx_name,
-                        server = server,
-                        user = user,
-                        password = password)
+  qx_match <- filter(qnrList_all, Title == qx_name, Version == version)
+
+  if (nrow(qx_match) == 1) {
+    qx_id <- qx_match$QuestionnaireIdentity
+  } else {
+    stop("Template does not exist on server. Check questionnaire name and version number.")
+  }
 
   # -----------------------------------------------------------------------------
   # Request export files to be created
   # -----------------------------------------------------------------------------
 
-  export_URL <- sprintf("%s/export/%s/%s$%i",
-                        api_URL, export_type, template, version)
+  export_URL <- sprintf("%s/export/%s/%s",
+                        api_URL, export_type, qx_id)
 
   # post request to API
   start_query <- paste0(export_URL, "/start")
@@ -84,10 +86,10 @@ dl_one <- function(
   if (is.na(headers(startExport)$date)) {
     # take the date in case the response header is missing
     start_time <- as.POSIXct(startExport$date,
-                             format = "%Y-%m-%d %H:%M:%S", tz = "GMT")
+                            format = "%Y-%m-%d %H:%M:%S", tz = "GMT")
   } else {
-     start_time <- as.POSIXct(headers(startExport)$date,
-                              format = "%a, %d %b %Y %H:%M:%S", tz = "GMT")
+    start_time <- as.POSIXct(headers(startExport)$date,
+                            format = "%a, %d %b %Y %H:%M:%S", tz = "GMT")
   }
 
   # convert start time into UTC for standardization with server response time
@@ -110,8 +112,7 @@ dl_one <- function(
     get_details(export_URL, user, password)
 
   }	else if (status_code(startExport) == 400 | status_code(startExport) == 404) {
-    stop_for_status(start_result,
-                    "to find questionnaire. Check template name and version number.")
+    stop_for_status("Check questionnaire name and version number.")
   }
 
   # Wait 10 seconds for export to be made
