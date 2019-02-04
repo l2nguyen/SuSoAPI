@@ -12,7 +12,8 @@ dl_one <- function(
                     unzip = TRUE, #option to unzip file after download
                     server,  # server prefix
                     user = "APIuser",  # API user ID
-                    password = "Password123"  # password
+                    password = "Password123",  # password,
+                    tries = 10 # number of times to check for export
                     )
 {
   # -------------------------------------------------------------
@@ -105,8 +106,8 @@ dl_one <- function(
             qx_name, " v", version,
             " to be compiled on server.")
 
-    # wait 1 second between start request and status request
-    Sys.sleep(1)
+    # wait 5 second between start request and status request
+    Sys.sleep(5)
 
     #-- Get details of export status --#
     get_details(export_URL, user, password)
@@ -115,20 +116,21 @@ dl_one <- function(
     stop_for_status("Check questionnaire name and version number.")
   }
 
-  # Wait 10 seconds for export to be made
+  # alert user that export has started
   message("Waiting for export files to be generated...")
 
   # -----------------------------------------------------------------------------
   # React to status
   # -----------------------------------------------------------------------------
-  # Note: This will try to download the data 5 times
+  # Note: This will try to download the data as many times as the user specified,
+  # it is 10 by default
 
   requestCounter <- 1
 
   # If server is still working on generating export data, wait and then check status again
   while (export_details$ExportStatus %in%
          c("NotStarted", "Queued", "Running","Compressing")
-         & requestCounter <= 10) {
+         & requestCounter <= tries) {
     # Wait 10 seconds
     Sys.sleep(10)
 
@@ -148,7 +150,7 @@ dl_one <- function(
     }
 
     # If running or queued, keep waiting and check status again
-    if (export_details$ExportStatus %in% c("Queued","Running","Compressing")) {
+    if (export_details$ExportStatus %in% c("Queued", "Running", "Compressing")) {
 
       # wait before making another request,
       # where time is a function of the number of requests
@@ -175,7 +177,7 @@ dl_one <- function(
 
           # wait before making another request,
           # where time is a function of the number of requests
-          Sys.sleep(20 * requestCounter)
+          Sys.sleep(10 * requestCounter)
           # increment the counter of requests
           requestCounter <- requestCounter + 1
         }
