@@ -43,24 +43,30 @@ get_qx <- function(server, user, password) {
 
     # save the list of imported templates from the API as a data frame
     qnrList <- fromJSON(content(data, as = "text"), flatten = TRUE)
+    qnrList_temp <- as.data.frame(qnrList$Questionnaires)
 
     if (qnrList$TotalCount <= 40) {
       # if 40 questionnaires or less, then do not need to call again
       # Extract information about questionnaires on server
-      qnrList_all <- as.data.frame(qnrList$Questionnaires) %>% arrange(Title, Version)
-
+      qnrList_all <- arrange(qnrList_temp, Title, Version)
     } else {
       # If more than 40 questionnaires, run query again to get the rest
-      qnrList_all <- as.data.frame(qnrList$Questionnaires)
+      nquery <- ceiling(qnrList$TotalCount %% 40)
 
+      for(i in 2:nquery){
       data2 <- GET(query, authenticate(user, password),
-                  query = list(limit = 40, offset = 2))
+                  query = list(limit = 40, offset = i))
 
       qnrList2 <- fromJSON(content(data2, as = "text"), flatten = TRUE)
 
-      qnrList_all <- bind_rows(qnrList_all,
-                           as.data.frame(qnrList2$Questionnaires)) %>% arrange(Title, Version)
+      qnrList_temp <- bind_rows(qnrList_temp,
+                           as.data.frame(qnrList2$Questionnaires))
+      }
+      qnrList_all <- arrange(qnrList_temp, Title, Version)
     }
+
+    # assign to global environment for access by other functions
+    assign('qnrList_all', qnrList_all, envir = .GlobalEnv)
 
     } else if (status_code(data) == 401) {   # login error
     message("Incorrect username or password. Check login credentials for API user")
