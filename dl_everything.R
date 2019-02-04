@@ -29,6 +29,7 @@ dl_everything <- function(
   load_pkg('here')
 
   # source download one function
+  source(here("get_qx.R"))
   source(here("dl_one.R"))
 
   # -------------------------------------------------------------

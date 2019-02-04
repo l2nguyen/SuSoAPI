@@ -32,7 +32,7 @@ dl_allVers <- function(
   load_pkg('lubridate')
   load_pkg('here')
 
-  source(here("get_qx_id.R"))
+  source(here("get_qx.R"))
   source(here("dl_one.R"))
 
   # -------------------------------------------------------------
@@ -72,7 +72,7 @@ dl_allVers <- function(
 
   # check that user did not specify both drop and keep
   if (!is.null(keep) && !is.null(drop)) {
-    stop("Specify keep or drop. Do not specify both.")
+    stop("Specify keep or drop. Cannot specify both.")
   }
 
   # -------------------------------------------------------------
@@ -88,7 +88,7 @@ dl_allVers <- function(
   }
 
   # get template ID of provided template
-  template <- get_qx_id(qx_name, server = server, user = user, password = password)
+  template <- unique(qnrList_all$QuestionnaireId[qnrList_all$Title == qx_name])
 
   # get all versions of the questionnaire on the server based on template ID
   allVers <- qnrList_all$Version[qnrList_all$QuestionnaireId == template]
@@ -110,7 +110,7 @@ dl_allVers <- function(
       version = i,
       export_type = export_type,
       folder = folder,
-      unzip = TRUE,
+      unzip = unzip,
       server = server,
       user = user,
       password = password

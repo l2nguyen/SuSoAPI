@@ -28,6 +28,7 @@ dl_similar <- function(
   load_pkg('lubridate')
   load_pkg('here')
 
+  source(here("get_qx.R"))
   source(here("dl_one.R"))
 
   # -------------------------------------------------------------
@@ -45,7 +46,8 @@ dl_similar <- function(
   }
 
   # Check if it is a valid data type
-  if ((tolower(export_type) %in% c("tabular", "stata", "spss", "binary", "paradata")) == FALSE) {
+  if ((tolower(export_type) %in%
+       c("tabular", "stata", "spss", "binary", "paradata")) == FALSE) {
     stop("Data type has to be one of the following: Tablular, STATA, SPSS, Binary, paradata")
   }
 
