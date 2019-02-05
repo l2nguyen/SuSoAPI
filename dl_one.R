@@ -200,23 +200,20 @@ dl_one <- function(
     zip_name <- paste0(zip_path,".zip")
 
     # Query to download data
-    downloadReq <- GET(
+    downloadData <- GET(
       export_URL,
-      authenticate(user, password)
+      accept_json(),
+      authenticate(user, password),
+      write_disk(zip_name, overwrite = TRUE), # write to disk that handles large files
+      progress(),                             # show progress of download
+      config(                                 # use curl options to:
+        followlocation = 1L,                      # follow redirects 
+        unrestricted_auth = 0L                    # but not pass auth to redirects        
+        )
     )
 
     # check status code of query
-    if (status_code(downloadReq) >= 300 & status_code(downloadReq) <= 400) {
-      downloadData <- GET(downloadReq$url)
-    } else {
-      message(paste0("Problem downloading data. Server status code: ",
-                     status_code(downloadData)))
-    }
-
     if (status_code(downloadData) == 200) {
-      bin <- content(downloadData,"raw")
-      # write content to the zip file
-      writeBin(bin, zip_name)
       message("Sucessfully exported ", qx_name, " version ", version)
 
       # unzip
