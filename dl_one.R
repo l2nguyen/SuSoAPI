@@ -158,7 +158,6 @@ dl_one <- function(
 
       requestCounter <- requestCounter + 1
     } else if (export_details$ExportStatus == "NotStarted") {
-
       # check if exported file has already finished and export file now exists
       # NOTE: Tabular data files generate so quickly that the server has reverted
       # back to "Not Started" status by the time we check for details.
@@ -181,6 +180,12 @@ dl_one <- function(
           # increment the counter of requests
           requestCounter <- requestCounter + 1
         }
+      } else {
+        # wait until making another request
+        Sys.sleep(10 * requestCounter)
+
+        # increment number of request
+        requestCounter <- requestCounter + 1
       }
     }
   }
@@ -204,11 +209,13 @@ dl_one <- function(
       export_URL,
       accept_json(),
       authenticate(user, password),
-      write_disk(zip_name, overwrite = TRUE), # write to disk that handles large files
-      progress(),                             # show progress of download
+      # write to disk that handles large files
+      write_disk(zip_name, overwrite = TRUE),
+      # show progress of download
+      progress(),
       config(                                 # use curl options to:
-        followlocation = 1L,                      # follow redirects 
-        unrestricted_auth = 0L                    # but not pass auth to redirects        
+        followlocation = 1L,                      # follow redirects
+        unrestricted_auth = 0L                    # but not pass auth to redirects
         )
     )
 
