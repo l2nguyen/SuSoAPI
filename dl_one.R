@@ -67,6 +67,8 @@ dl_one <- function(
 
   if (nrow(qx_match) == 1) {
     qx_id <- qx_match$QuestionnaireIdentity
+    # questionnaire variable for naming zip file later
+    qx_var <- qx_match$Variable
   } else {
     stop("Template does not exist on server. Check questionnaire name and version number.")
   }
@@ -194,9 +196,8 @@ dl_one <- function(
   if (export_details$ExportStatus == "Finished") {
     # Set folder to directory specified by user
     # concatenate file name - the name matches the name of a manual download
-
     zip_path <- paste0(folder,"/",
-                       qx_name, "_",
+                       qx_var, "_",
                        version, "_",
                        str_to_upper(export_type), "_",
                        "All")
