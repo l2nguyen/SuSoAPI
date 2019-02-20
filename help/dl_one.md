@@ -6,7 +6,7 @@ Exports data from a version of the specified questionnaire using the Survey Solu
 ### Usage
 ```R
 dl_one(qx_name, version = 1, export_type = "tabular", folder, unzip = TRUE, 
-	server, user = "APIuser", password = "Password123")
+	server, user = "APIuser", password = "Password123", tries = 10)
 ```
 
 ### Arguments

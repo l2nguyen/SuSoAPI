@@ -7,7 +7,7 @@ Exports data from all versions of a specified questionnaire
 ```R
 dl_allVers(qx_name, ignore.case = TRUE, 
            export_type = "tabular", folder, unzip = TRUE,
-           server, user = "APIuser", password = "Password123")
+           server, user = "APIuser", password = "Password123", tries = 10)
 ```
 
 ### Arguments
@@ -19,6 +19,7 @@ dl_allVers(qx_name, ignore.case = TRUE,
 * **server** (*string*): Prefix for the survey server. It is whatever comes before mysurvey.solutions: *[prefix]*.mysurvey.solutions.
 * **user** (*string*): Username for the API user on the server.
 * **password** (*string*): Password for the API user on the server.
+* **tries** (*numeric*): Number of times to try getting an export before moving on to next one. Default is 10 times. If you are expecting the dataset on your servers to take a long time to export, increase the number of tries.
 
 
 ### Examples
