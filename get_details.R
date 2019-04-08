@@ -19,7 +19,7 @@ get_details <- function(export_URL,
     if (!require(x, character.only = TRUE)) {
       install.packages(x, repos = 'https://cloud.r-project.org/', dep = TRUE)
     }
-    library(x, character.only = TRUE)
+    require(x, character.only = TRUE)
   }
 
   # load packages

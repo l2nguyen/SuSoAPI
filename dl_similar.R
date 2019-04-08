@@ -20,7 +20,7 @@ dl_similar <- function(
     if (!require(x, character.only = TRUE)) {
       install.packages(x, repos = 'https://cloud.r-project.org/', dep = TRUE)
     }
-    library(x, character.only = TRUE)
+    require(x, character.only = TRUE)
   }
 
   load_pkg('stringr')
@@ -29,8 +29,8 @@ dl_similar <- function(
   load_pkg('lubridate')
   load_pkg('here')
 
-  source(here("get_qx.R"))
-  source(here("dl_one.R"))
+  source(here::here("get_qx.R"))
+  source(here::here("dl_one.R"))
 
   # -------------------------------------------------------------
   # check function inputs

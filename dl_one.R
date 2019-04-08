@@ -24,7 +24,7 @@ dl_one <- function(
     if (!require(x, character.only = TRUE)) {
       install.packages(x, repos = 'https://cloud.r-project.org/', dep = TRUE)
     }
-    library(x, character.only = TRUE)
+    require(x, character.only = TRUE)
   }
 
   load_pkg('stringr')
@@ -33,9 +33,9 @@ dl_one <- function(
   load_pkg('lubridate')
   load_pkg('here')
 
-  source(here("check_setup.R"))
-  source(here("get_details.R"))
-  source(here("get_qx.R"))
+  source(here::here("check_setup.R"))
+  source(here::here("get_details.R"))
+  source(here::here("get_qx.R"))
 
   # -------------------------------------------------------------
   # Get list of questionnaires from server
