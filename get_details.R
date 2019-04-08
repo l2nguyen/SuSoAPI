@@ -41,7 +41,7 @@ get_details <- function(export_URL,
                              format = "%a, %d %b %Y %H:%M:%S", tz = "GMT")
 
   # convert start time into UTC for standardization with server response time
-  request_time <- with_tz(request_time, "UTC")
+  request_time <- lubridate::with_tz(request_time, "UTC")
 
   # Convert server response in JSON to data frame
   export_details <- fromJSON(content(statusExport, as = "text"), flatten = TRUE)
@@ -51,7 +51,8 @@ get_details <- function(export_URL,
 
   # Time of last update of status from server.
   # NOTE: This is not the same as the time the details query was sent
-  export_details$LastUpdateDate <- ymd_hms(export_details$LastUpdateDate, tz = "UTC")
+  export_details$LastUpdateDate <- lubridate::ymd_hms(export_details$LastUpdateDate,
+                                                      tz = "UTC")
 
   return(export_details)
 }
