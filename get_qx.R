@@ -51,7 +51,7 @@ get_qx <- function(server, user, password) {
       qnrList_all <- arrange(qnrList_temp, Title, Version)
     } else {
       # If more than 40 questionnaires, run query again to get the rest
-      nquery <- ceiling(qnrList$TotalCount %% 40)
+      nquery <- ceiling(qnrList$TotalCount/40)
 
       for(i in 2:nquery){
       data2 <- GET(query, authenticate(user, password),
