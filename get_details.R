@@ -37,7 +37,8 @@ get_details <- function(export_URL,
   statusExport <- GET(details_query, authenticate(user, password))
 
   # Get start time of export
-  request_time <- as.POSIXct(headers(statusExport)$date, format = "%a, %d %b %Y %H:%M:%S", tz = "GMT")
+  request_time <- as.POSIXct(headers(statusExport)$date,
+                             format = "%a, %d %b %Y %H:%M:%S", tz = "GMT")
 
   # convert start time into UTC for standardization with server response time
   request_time <- with_tz(request_time, "UTC")
@@ -52,5 +53,5 @@ get_details <- function(export_URL,
   # NOTE: This is not the same as the time the details query was sent
   export_details$LastUpdateDate <- ymd_hms(export_details$LastUpdateDate, tz = "UTC")
 
-  assign('export_details', export_details, envir = .GlobalEnv)
+  return(export_details)
 }

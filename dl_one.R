@@ -112,7 +112,7 @@ dl_one <- function(
     Sys.sleep(5)
 
     #-- Get details of export status --#
-    get_details(export_URL, user, password)
+    export_details <- get_details(export_URL, user, password)
 
   }	else if (status_code(startExport) == 400 | status_code(startExport) == 404) {
     stop_for_status("Check questionnaire name and version number.")
@@ -137,7 +137,7 @@ dl_one <- function(
     Sys.sleep(10)
 
     # Check details again
-    get_details(export_URL, user, password)
+    export_details <- get_details(export_URL, user, password)
 
     # get time of last update
     last_update <- export_details$LastUpdateDate
