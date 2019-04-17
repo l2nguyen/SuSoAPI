@@ -29,7 +29,7 @@ You can use the functions in one of three ways:
 #### Server Details
 If you are using the functions to download the same type of data from the same server, you should make a serverDetails.R file to save time. Fill in this [template](serverDetails.R) with details on your server and login for the API user.
 
-### Running R code in Stata
+#### Running R code in Stata
 It is possible to call R code in Stata using the [rcall package](https://github.com/haghish/rcall). Installation information is available on the package's github.
 
 This package allows R and Stata to interact and exchange data so it is possible to use these API functions in Stata with rcall. However, this will require writing a script in R to download the data from the API. Use it only after reading the documentation for rcall thoroughly.
