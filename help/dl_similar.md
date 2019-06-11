@@ -5,7 +5,7 @@ Exports data from all questionnaires that match a provided pattern. Function use
 
 ### Usage
 ```R
-dl_similar(pattern, exclude = NULL, ignore.case = TRUE, 
+dl_similar(pattern, exclude = NULL, 
       export_type = "tabular", folder, unzip = TRUE, 
       server, user = "APIuser", password = "Password123", tries = 10)
 ```
@@ -13,7 +13,6 @@ dl_similar(pattern, exclude = NULL, ignore.case = TRUE,
 ### Arguments
 * **pattern** (*string* or list of strings): Pattern to match in the name of questionnaires to download. Can use regular expression for this.
 * **exclude** (*string* or list of strings): Questionnaire names containing words in this exclude list will not be downloaded. By default, there are no exclusionary terms.
-* **ignore.case** (*boolean*): Whether the match for pattern and exclusionary terms should be case sensistive. It is set to *TRUE* by default so the match is not case sensitive.
 * **export_type** (*string*): The type of data to export. Options are tabular, stata, spss, binary, paradata. Default is tabular.
 * **folder** (*string*): The directory to export the data into. Must be a string. Use forward slash (/) instead of backslash (\\).
 * **unzip** (*boolean*):  Option to unzip the downloaded zip file into the same directory. By default, it will unzip. Set this parameter to *FALSE* if you would like to not unzip the exported data after download.
@@ -52,22 +51,14 @@ Let's say I want to download all the data for all versions of the household ques
 The code to download the data I want using the **dl_similar** function would look like this:
 
 ```R
-dl_similar(pattern = "HH", exclude = c("TRAINING", "PILOT"), ignore.case = TRUE, 
-        export_type = "stata", folder = "C:/User/LF_Survey/Data/", unzip = TRUE, 
-        server = "lf2018", user = "APIuser2018", password = "SafePassword123")
-```
-
-Since I set the `ignore.case` parameter to be `TRUE`, the match for the pattern and exclusion terms will not be case sensitive so this code would also work:
-
-```R
-dl_similar(pattern = "hh", exclude = c("training", "pilot"), ignore.case = TRUE, 
+dl_similar(pattern = "HH", exclude = c("TRAINING", "PILOT"), 
         export_type = "stata", folder = "C:/User/LF_Survey/Data/", unzip = TRUE, 
         server = "lf2018", user = "APIuser2018", password = "SafePassword123")
 ```
 
 Now let's say I also want the data from the community questionnaire as well as the household questionnaire. I will once again make a list of strings by using the c() function in R. The pattern will not be set to this `c("hh", "comm")`. So now my code to download the data would look like this:
 ```R
-dl_similar(pattern = c("hh", "com"), exclude = c("TRAINING", "PILOT"), ignore.case = TRUE, 
+dl_similar(pattern = c("hh", "com"), exclude = c("TRAINING", "PILOT"), 
         export_type = "stata", folder = "C:/User/LF_Survey/Data/", unzip = TRUE, 
         server = "lf2018", user = "APIuser2018", password = "SafePassword123")
 ```

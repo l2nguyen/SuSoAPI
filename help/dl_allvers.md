@@ -5,7 +5,7 @@ Exports data from all versions of a specified questionnaire. It is important to 
 
 ### Usage
 ```R
-dl_allVers(qx_name, keep = NULL, drop = NULL, ignore.case = TRUE, 
+dl_allVers(qx_name, keep = NULL, drop = NULL,
            export_type = "tabular", folder, unzip = TRUE,
            server, user = "APIuser", password = "Password123", tries = 10)
 ```
@@ -14,7 +14,6 @@ dl_allVers(qx_name, keep = NULL, drop = NULL, ignore.case = TRUE,
 * **qx_name** (*string*): Name of the template to download. This is the name of the template on the server and not the template ID. Note that this is case sensitive.
 * **keep** (*integer* or vector of *integers*): Versions in this list will be be exported. This is useful if you would like to keep only a subset of all the versions.  Users can only specify versions to keep or drop but cannot specify both keep and drop as parameters. By default, all versions are kept.
 * **drop** (*integer* or vector of *integers*): Versions in this list will not be exported. This is useful if you would like to drop a subset of all the versions. Users can only specify versions to keep or drop but cannot specify both keep and drop as parameters. By default, no versions are dropped.
-* **ignore.case** (*boolean*): Whether the match for pattern and exclusionary terms should be case sensistive. It is set to *TRUE* by default so the match is not case sensitive.
 * **export_type** (*string*): The type of data to export. Options are tabular, stata, spss, binary, paradata. Default is tabular.
 * **folder** (*string*): The directory to export the data into. Must be a string. Use forward slash (/) instead of backslash (\\).
 * **unzip** (*boolean*):  Option to unzip the downloaded zip file into the same directory. By default, it will unzip. Set this parameter to *FALSE* if you would like to not unzip the exported data after download.
@@ -43,21 +42,7 @@ The list of questionnaires currently imported on my server looks like this:
 To use **dl_allVers** to download the data for that questionnaire, after loading the **dl_allVers** function into the workspace, I would run the following code:
 
 ```R
-dl_allVers(qx_name = "LF Survey HH Q2", ignore.case = TRUE, export_type = "tabular", 
-      folder = "C:/User/LF_Survey/Data/", unzip = TRUE, 
-      server = "lf2018", user = "APIuser2018", password = "SafePassword123")
-```
-
-Since I set the ignore.case parameter to be TRUE for the function, the questionnaire name is not case sensitive so I do not have to capitalize the questionnaire name exactly as it appears on the server. The following code will also work:
-
-```R
-dl_allVers(qx_name = "LF SURVEY HH Q1", ignore.case = TRUE, export_type = "tabular", 
-      folder = "C:/User/LF_Survey/Data/", unzip = TRUE, 
-      server = "lf2018", user = "APIuser2018", password = "SafePassword123")
-```
-
-```R
-dl_allVers(qx_name = "lf survey hh q1", ignore.case = TRUE, export_type = "tabular", 
+dl_allVers(qx_name = "LF Survey HH Q2", export_type = "tabular", 
       folder = "C:/User/LF_Survey/Data/", unzip = TRUE, 
       server = "lf2018", user = "APIuser2018", password = "SafePassword123")
 ```
@@ -66,7 +51,7 @@ If I only wanted to keep version 11 and 12, I can specify the drop parameter so 
 
 ```R
 dl_allVers(qx_name = "LF Survey HH Q2", drop = 10, 
-      ignore.case = TRUE, export_type = "tabular", 
+      export_type = "tabular", 
       folder = "C:/User/LF_Survey/Data/", unzip = TRUE, 
       server = "lf2018", user = "APIuser2018", password = "SafePassword123")
 ```
@@ -75,7 +60,7 @@ Alternatively, I can specify the keep parameter to export version 11 and 12, lik
 
 ```R
 dl_allVers(qx_name = "LF Survey HH Q2", keep = c(11,12), 
-      ignore.case = TRUE, export_type = "tabular", 
+      export_type = "tabular", 
       folder = "C:/User/LF_Survey/Data/", unzip = TRUE, 
       server = "lf2018", user = "APIuser2018", password = "SafePassword123")
 ```
