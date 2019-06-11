@@ -5,7 +5,6 @@
 dl_similar <- function(
                        pattern,  # pattern to search for. Can use regex. can be vector of strings
                        exclude = NULL, # words to exclude, can be vector of strings
-                       ignore.case = TRUE,  # to ignore case in filter
                        export_type = "tabular", # export type
                        folder,   # directory for data download
                        unzip = TRUE, # option to unzip after download
@@ -74,13 +73,6 @@ dl_similar <- function(
 
   # First, get questionnaire information from server
   get_qx(server, user, password)
-
-  # case sensitivity option
-  if (ignore.case) {
-    pattern <- str_to_upper(str_trim(pattern))
-    exclude <- str_to_upper(str_trim(exclude))
-    qnrList_all$Title <- str_to_upper(str_trim(qnrList_all$Title))
-  }
 
   # make initial download list based on pattern
   if (length(pattern) == 1) {

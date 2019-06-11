@@ -4,9 +4,8 @@
 
 dl_allVers <- function(
                        qx_name,  # Name of questionnaire (not template ID)
-                       keep = NULL,
-                       drop = NULL,
-                       ignore.case = TRUE,  # to ignore case in qx name
+                       keep = NULL, # versions to keep
+                       drop = NULL, # versions to drop
                        export_type = "tabular", # export type
                        folder,   # directory for data download
                        unzip = TRUE, # whether to unzip or not
@@ -82,11 +81,6 @@ dl_allVers <- function(
 
   # First, get questionnaire information from server
   get_qx(server, user = user, password = password)
-
-  if (ignore.case) {
-    qx_name <- str_to_upper(str_trim(qx_name))
-    qnrList_all$Title <- str_to_upper(str_trim(qnrList_all$Title))
-  }
 
   # get template ID of provided template
   template <- unique(qnrList_all$QuestionnaireId[qnrList_all$Title == qx_name])
