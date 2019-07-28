@@ -1,6 +1,6 @@
 # Survey Solutions API
 
-Wrapper functions that use the Survey Solutions API to perform certain tasks. 
+Wrapper functions for Survey Solutions API.
 
 ## Description of functions currently available:
 * [dl_one](dl_one.R): Downloads the data for the specified version for the specified questionnaire.  [How to use.](help/dl_one.md)
