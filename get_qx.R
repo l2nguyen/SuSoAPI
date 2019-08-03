@@ -12,8 +12,9 @@
 # Returns:
 # A data frame that has all the information about the imported
 # questionnaires on the server. This is a prettified version of the JSON response.
+# By default, this puts the questionnaire list onto the global
 
-get_qx <- function(server, user, password) {
+get_qx <- function(server, user, password, put_global=TRUE) {
 
   load_pkg <- function(x) {
     if (!require(x, character.only = TRUE)) {
@@ -39,7 +40,7 @@ get_qx <- function(server, user, password) {
               query = list(limit = 40, offset = 1))
 
   # If response code is 200, request was succesffuly processed
-  if (status_code(data) == 200) {
+  if (status_code(data)==200) {
 
     # save the list of imported templates from the API as a data frame
     qnrList <- fromJSON(content(data, as = "text"), flatten = TRUE)
@@ -50,23 +51,30 @@ get_qx <- function(server, user, password) {
       # Extract information about questionnaires on server
       qnrList_all <- arrange(qnrList_temp, Title, Version)
     } else {
+      quest_more <- list(qnrList_temp)
       # If more than 40 questionnaires, run query again to get the rest
       nquery <- ceiling(qnrList$TotalCount/40)
 
       for(i in 2:nquery){
-      data2 <- GET(query, authenticate(user, password),
-                  query = list(limit = 40, offset = i))
+        data2 <- GET(query, authenticate(user, password),
+                     query = list(limit = 40, offset = i))
 
-      qnrList2 <- fromJSON(content(data2, as = "text"), flatten = TRUE)
+        qnrList_more <- fromJSON(content(data2, as = "text"), flatten = TRUE)
+        questList_more <- as.data.frame(qnrList_more$Questionnaires)
 
-      qnrList_temp <- bind_rows(qnrList_temp,
-                           as.data.frame(qnrList2$Questionnaires))
+        quest_more[[i]] <- questList_more
+
+        qnrList_temp <- bind_rows(quest_more)
       }
       qnrList_all <- arrange(qnrList_temp, Title, Version)
     }
 
-    # assign to global environment for access by other functions
-    assign('qnrList_all', qnrList_all, envir = .GlobalEnv)
+    if (put_global==TRUE){
+      # assign to global environment for access by other functions
+      assign('qnrList_all', qnrList_all, envir = .GlobalEnv)
+    } else {
+      return(qnrList_all)
+    }
 
     } else if (status_code(data) == 401) {   # login error
     message("Incorrect username or password. Check login credentials for API user")
