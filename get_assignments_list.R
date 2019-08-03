@@ -1,9 +1,10 @@
-get_assignments_list <- function(template_id = "",
+get_assignments_list <- function(template_id = NULL, # template id
+                                 qx_name = NULL, # questionnaire name
                                  version = NULL, # version
                                  responsible = "", # by default, find all
                                  archived = FALSE, # by default, not archived
                                  output = "df", # options: tab, data frame or excel
-                                 output_path = "", # output file name
+                                 output_path = NULL, # output file name
                                  server, # server prefix
                                  user, # API user username
                                  password) # password for API user
@@ -26,9 +27,10 @@ get_assignments_list <- function(template_id = "",
   load_pkg('tidyr')
   load_pkg('readr')
   load_pkg('writexl')
+  load_pkg('here')
 
   # -------------------------------------------------------------
-  # check function inputs
+  # CHECK ALL INPUTS
   # -------------------------------------------------------------
 
   # check that server, login, password, and data type are non-missing
@@ -41,20 +43,22 @@ get_assignments_list <- function(template_id = "",
     }
   }
 
-  # Check if it is a valid data type
+  # Check output is a valid output data type
   if (tolower(output) %in% c("df", "tab", "excel") == FALSE) {
     stop("Output has to be either df (data frame), tab, or excel.")
   }
 
-  # confirm that expected folders exist
-  if (tolower(output) %in% c("tab", "excel") & length(output_path)<=1) {
+  # confirm that output path was specified
+  if ((tolower(output) %in% c("tab", "excel")) & is.null(output_path)) {
     stop("Specify output path for tab or excel output.")
   }
 
+  # check if archived is logical
   if (!is.logical(archived)){
     stop("Specify either TRUE or FALSE for archived status.")
   }
 
+  # check version is numeric
   if (!is.numeric(version)) {
     if (is.null(version)){
       stop("Specify version number.")
@@ -62,6 +66,37 @@ get_assignments_list <- function(template_id = "",
       stop("Version number ", version, " is not numeric.")
     } else {
       version <- as.numeric(version)
+    }
+  }
+
+  if(is.null(qx_name) & is.null(template_id)){
+    stop("Either qx_name or template_id must be specified.")
+  }
+  # check that not both qx name and template id is specified
+  if(!is.null(qx_name) & !is.null(template_id)){
+    stop("Specify only either qx_name or template_id.")
+  }
+
+  # -------------------------------------------------------------
+  # Get template id if only questionnaire name is specified
+  # -------------------------------------------------------------
+  if (!is.null(qx_name) & is.null(template_id)){
+    # load get_qx
+    source(here::here("get_qx.R"))
+
+    # trim white space around name
+    qx_name <- trimws(qx_name)
+
+    # get the list of questionnaires on the server
+    all_qx <- get_qx(server=server, user=user, password=password, put_global=FALSE)
+
+    # Get ID of template to get export URL
+    qx_match <- filter(all_qx, Title==qx_name, Version==version)
+
+    if (nrow(qx_match)==1) {
+      qx_id <- qx_match$QuestionnaireIdentity
+    } else {
+      stop("Could not find questionnaire on server. Check questionnaire name and version number is correct.")
     }
   }
 
@@ -79,7 +114,12 @@ get_assignments_list <- function(template_id = "",
   endpoint <- paste0(api_url, "/assignments")
 
   # build template id for query
-  qid = paste0(template_id, '$', version)
+  # if qx name specified, used qx_id
+  if (!is.null(template_id)){
+    qid = paste0(template_id, '$', version)
+  } else if (!is.null(qx_name)){
+    qid = qx_id
+  }
 
   user_query <- list(questionnaireId = qid,
                      responsible = responsible,
@@ -110,7 +150,7 @@ get_assignments_list <- function(template_id = "",
     df_with_id <- left_join(df, Id_vars, by = 'Id')
 
     df_with_id  <- df_with_id  %>%
-      select(-ResponsibleId, -IdentifyingQuestions)
+      select(-ResponsibleId, -QuestionnaireId, -IdentifyingQuestions)
 
     return(df_with_id)
   }
