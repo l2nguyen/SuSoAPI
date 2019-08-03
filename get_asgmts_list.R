@@ -1,13 +1,13 @@
-get_assignments_list <- function(template_id = NULL, # template id
-                                 qx_name = NULL, # questionnaire name
-                                 version = NULL, # version
-                                 responsible = "", # by default, find all
-                                 archived = FALSE, # by default, not archived
-                                 output = "df", # options: tab, data frame or excel
-                                 output_path = NULL, # output file name
-                                 server, # server prefix
-                                 user, # API user username
-                                 password) # password for API user
+get_asgmts_list <- function(template_id = NULL, # template id
+                            qx_name = NULL, # questionnaire name
+                            version = NULL, # version
+                            responsible = "", # by default, find all
+                            archived = FALSE, # by default, not archived
+                            output = "df", # options: tab, data frame or excel
+                            output_path = NULL, # output file name
+                            server, # server prefix
+                            user, # API user username
+                            password) # password for API user
 {
 
   # -------------------------------------------------------------
