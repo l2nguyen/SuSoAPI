@@ -13,7 +13,7 @@ get_asgmts_list(template_id = NULL, qx_name = NULL, version = NULL,
 
 ### Arguments
 * **template_id** (*string*): Template ID of the questionnaire. Can specify either template_id or qx_name to find the questionnaire of interest. Do not specify both.
-* **qx_name** (*string*): Name of the questionnaire. This is the name of the template on the server and not the template ID. Note that this is case sensitive. Can specify either template_id or qx_name to find the questionnaire of interest. Do not specify both. **To use this, you will need to have [get_qx function](help/get_qx.md) also.
+* **qx_name** (*string*): Name of the questionnaire. This is the name of the template on the server and not the template ID. Note that this is case sensitive. Can specify either template_id or qx_name to find the questionnaire of interest. Do not specify both. *To use this, you will need to have [get_qx function](help/get_qx.md) also.*
 * **responsible** (*string*): Option to filter by the user responsible for the assignment. By default, it will find all assignments for the questionnaire regardless of who is responsible.
 * **archived** (*boolean*): Option to search for archived assignments. If *TRUE*, the assignment list will only show archived assignments. By default, the list will only show active assignments.
 * **version** (*integer*): Version of the questionnaire that you would like the assignments for.
