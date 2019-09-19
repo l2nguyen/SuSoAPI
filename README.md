@@ -9,6 +9,7 @@ Wrapper functions for Survey Solutions API.
 * [get_qx](get_qx.R): Gets information about all the questionnaires imported on the server.  [How to use.](help/get_qx.md)
 * [get_qx_id](get_qx_id.R): Returns the template ID of the specified questionnaire.
 * [get_asgmts_list](get_asgmts_list.R): Returns all the assignments on the server for a version of a questionnaire. [How to use.](help/get_asgmts_list.md)
+* [archive_asgmts](archive_asgmts.R): Archive assignments.
 
 ## Getting Started
 ### Prerequisites

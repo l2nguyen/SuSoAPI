@@ -1,4 +1,4 @@
-archive_asgmts <- function(ids = NULL, # assignment ID, can be list
+archive_asgmts <- function(ids = NULL, # assignment ID, can be vector
                            server, # server prefix
                            user, # API user username
                            password) # password for API user
