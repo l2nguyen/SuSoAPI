@@ -55,17 +55,17 @@ get_qx <- function(server, user, password, put_global=TRUE) {
       # If more than 40 questionnaires, run query again to get the rest
       nquery <- ceiling(qnrList$TotalCount/40)
 
+      # send query for more questionnaires
       for(i in 2:nquery){
         data2 <- GET(query, authenticate(user, password),
                      query = list(limit = 40, offset = i))
 
         qnrList_more <- fromJSON(content(data2, as = "text"), flatten = TRUE)
         questList_more <- as.data.frame(qnrList_more$Questionnaires)
-
+        # append loop df to list
         quest_more[[i]] <- questList_more
-
-        qnrList_temp <- bind_rows(quest_more)
       }
+      qnrList_temp <- bind_rows(quest_more)
       qnrList_all <- arrange(qnrList_temp, Title, Version)
     }
 
