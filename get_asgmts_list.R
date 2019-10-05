@@ -188,7 +188,9 @@ get_asgmts_list <- function(template_id = NULL, # template id
   }
 
   # bind all output together into a big dataframe
-  all_assignments <- bind_rows(df_list)
+  if (length(df_list)==1){
+    all_assignments <- df_list[[1]]
+  else{all_assignments <- bind_rows(df_list)}
 
   if (output == "tab"){
     readr::write_tsv(all_assignments, path=output_path)
