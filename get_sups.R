@@ -38,7 +38,7 @@ get_sups <- function(server, user, password) {
     # number of times to loop
     n_calls <- ceiling(total_count/limit)
   } else if (httr::status_code(data) == 401) {# login error
-    stop("Incorrect username or password. Check login credentials for API user")
+    stop("Incorrect username or password. Check login credentials.")
   } else {# any other error
     stop("Encountered issue with status code ", status_code(data))
   }
@@ -68,4 +68,3 @@ get_sups <- function(server, user, password) {
   # return data frame with supervisors
   return(sups_df)
 }
-
