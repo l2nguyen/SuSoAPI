@@ -1,0 +1,71 @@
+get_sups <- function(server, user, password) {
+
+  load_pkg <- function(x) {
+    if (!require(x, character.only = TRUE)) {
+      install.packages(x, repos = 'https://cloud.r-project.org/', dep = TRUE)
+    }
+    library(x, character.only = TRUE)
+  }
+
+  # require packages
+  load_pkg("httr")
+  load_pkg("jsonlite")
+  load_pkg("dplyr")
+
+  # build base URL for API
+  server <- tolower(trimws(server))
+
+  # build base URL for API
+  api_url <- sprintf("https://%s.mysurvey.solutions/api/v1",
+                     server)
+
+  # build query
+  endpoint <- paste0(api_url, "/supervisors")
+
+  # initial call to test API works
+  data <- httr::GET(endpoint, authenticate(login, password),
+                    query= list(limit=40))
+
+  # if API call works, get supervisor information
+  if (status_code(data) == 200) {
+    # save the list of imported templates from the API as a data frame
+    sups <- jsonlite::fromJSON(content(data, as = "text"), flatten = TRUE)
+    super_df <- sups$Users
+    df_list <- list(super_df)
+    # get total count for iteration
+    total_count <- sups$TotalCount
+    limit <- sups$Limit
+    # number of times to loop
+    n_calls <- ceiling(total_count/limit)
+  } else if (httr::status_code(data) == 401) {# login error
+    stop("Incorrect username or password. Check login credentials for API user")
+  } else {# any other error
+    stop("Encountered issue with status code ", status_code(data))
+  }
+
+  # if less than 40, return only data frame in list
+  if (total_count<=40){
+    sups_df <- df_list[[1]]
+  } else{
+    for (i in 2:n_calls){
+      loop_resp <- httr::GET(endpoint, authenticate(login, password),
+                             query= list(limit=40, offset=i))
+
+      if (status_code(loop_resp) == 200) {
+        # process response
+        flat_loop <- jsonlite::fromJSON(content(loop_resp, as = "text"),
+                                        flatten = TRUE)
+        loop_df <- flat_loop$Users
+        # append to existing list of df
+        df_list[[i]] <- loop_df
+      } else {# any other error
+        stop("Encountered issue with status code ", status_code(loop_resp))
+      }
+    }
+    # bind all dataframes with supervisor info together
+    sups_df <- dplyr::bind_rows(df_list)
+  }
+  # return data frame with supervisors
+  return(sups_df)
+}
+
