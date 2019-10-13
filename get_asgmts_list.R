@@ -33,7 +33,7 @@ get_asgmts_list <- function(template_id = NULL, # template id
   # CHECK ALL INPUTS
   # -------------------------------------------------------------
 
-  # check that server, login, password, and data type are non-missing
+  # check that server, login, password are non-missing
   for (x in c("server", "user", "password")) {
     if (!is.character(get(x))) {
       stop(x, "has to be a string.")

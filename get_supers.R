@@ -12,6 +12,16 @@ get_supers <- function(server, user, password) {
   load_pkg("jsonlite")
   load_pkg("dplyr")
 
+  # check that server, user, password are non-missing and strings
+  for (x in c("server", "user", "password")) {
+    if (!is.character(get(x))) {
+      stop(x, "has to be a string.")
+    }
+    if (nchar(get(x)) == 0) {
+      stop(paste("The following parameter is not specified in the program:", x))
+    }
+  }
+
   # build base URL for API
   server <- tolower(trimws(server))
 
