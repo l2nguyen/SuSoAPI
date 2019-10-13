@@ -1,4 +1,4 @@
-get_sups <- function(server, user, password) {
+get_supers <- function(server, user, password) {
 
   load_pkg <- function(x) {
     if (!require(x, character.only = TRUE)) {
@@ -7,7 +7,7 @@ get_sups <- function(server, user, password) {
     library(x, character.only = TRUE)
   }
 
-  # require packages
+  # required packages
   load_pkg("httr")
   load_pkg("jsonlite")
   load_pkg("dplyr")
