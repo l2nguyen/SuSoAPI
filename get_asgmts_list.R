@@ -88,10 +88,11 @@ get_asgmts_list <- function(template_id = NULL, # template id
     qx_name <- trimws(qx_name)
 
     # get the list of questionnaires on the server
-    all_qx <- get_qx(server=server, user=user, password=password, put_global=FALSE)
+    all_qx <- get_qx(server=server, user=user,
+                     password=password, put_global=FALSE)
 
     # Get ID of template to get export URL
-    qx_match <- filter(all_qx, Title==qx_name, Version==version)
+    qx_match <- dplyr::filter(all_qx, Title==qx_name, Version==version)
 
     if (nrow(qx_match)==1) {
       qx_id <- qx_match$QuestionnaireIdentity
@@ -126,11 +127,11 @@ get_asgmts_list <- function(template_id = NULL, # template id
                      showArchive = archived)
 
   # Send GET request to API
-  data <- GET(endpoint, authenticate(login, password),
-              query = user_query)
+  data <- httr::GET(endpoint, authenticate(login, password),
+                    query = user_query)
 
   # save the list of imported templates from the API as a data frame
-  assignments <- fromJSON(content(data, as = "text"))
+  assignments <- jsonlite::fromJSON(content(data, as = "text"))
 
   # get total count
   total_count <- assignments$TotalCount
@@ -142,15 +143,15 @@ get_asgmts_list <- function(template_id = NULL, # template id
   # function to transform the id vars from list into columns
   transform_id_vars <- function(df){
     Id_vars <- df %>%
-      select(Id, IdentifyingQuestions) %>%
-      unnest() %>%
-      select(-Identity) %>%
-      spread(Variable, Answer)
+      dplyr::select(Id, IdentifyingQuestions) %>%
+      tidyr::unnest(cols = c(IdentifyingQuestions)) %>%
+      dplyr::select(-Identity) %>%
+      tidyr::spread(Variable, Answer)
 
-    df_with_id <- left_join(df, Id_vars, by = 'Id')
+    df_with_id <- dplyr::left_join(df, Id_vars, by = 'Id')
 
     df_with_id  <- df_with_id  %>%
-      select(-ResponsibleId, -QuestionnaireId, -IdentifyingQuestions)
+      dplyr::select(-ResponsibleId, -QuestionnaireId, -IdentifyingQuestions)
 
     return(df_with_id)
   }
@@ -168,11 +169,11 @@ get_asgmts_list <- function(template_id = NULL, # template id
     )
 
     # Send GET request to API
-    resp <- GET(endpoint, authenticate(login, password),
-                query = user_query_loop)
+    resp <- httr::GET(endpoint, authenticate(login, password),
+                      query = user_query_loop)
 
     # save the list of imported templates from the API as a data frame
-    assignments <- fromJSON(content(resp, as = "text"))
+    assignments <- jsonlite::fromJSON(content(resp, as = "text"))
 
     # if call to api was unsuccesful, stop
     if (status_code(resp) != 200) {
@@ -190,7 +191,9 @@ get_asgmts_list <- function(template_id = NULL, # template id
   # bind all output together into a big dataframe
   if (length(df_list)==1){
     all_assignments <- df_list[[1]]
-  else{all_assignments <- dplyr::bind_rows(df_list)}
+  } else {
+    all_assignments <- dplyr::bind_rows(df_list)
+    }
 
   if (output == "tab"){
     readr::write_tsv(all_assignments, path=output_path)
