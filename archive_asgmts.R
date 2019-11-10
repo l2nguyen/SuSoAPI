@@ -55,9 +55,9 @@ archive_asgmts <- function(ids = NULL, # assignment ID, can be vector
     # build api endpoint
     endpoint <- paste0(url, "/assignments/", x, '/archive')
 
-    resp <- PATCH(endpoint, authenticate(user, password))
+    resp <- httr::PATCH(endpoint, authenticate(user, password))
 
-    if (status_code(resp)==200){
+    if (httr::status_code(resp)==200){
       message("Successfully archived assignment #", x)
     } else{
       message("Error archiving assignment #", x)

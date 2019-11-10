@@ -37,7 +37,7 @@ get_supers <- function(server, user, password) {
                     query= list(limit=40))
 
   # if API call works, get supervisor information
-  if (status_code(data) == 200) {
+  if (httr::status_code(data) == 200) {
     # save the list of imported templates from the API as a data frame
     sups <- jsonlite::fromJSON(content(data, as = "text"), flatten = TRUE)
     super_df <- sups$Users
@@ -74,7 +74,7 @@ get_supers <- function(server, user, password) {
     }
     # bind all dataframes with supervisor info together
     sups_df <- dplyr::bind_rows(df_list) %>%
-      dplyr:: select(UserName, UserId, IsLocked, CreationDate, DeviceId)
+      dplyr::select(UserName, UserId, IsLocked, CreationDate, DeviceId)
   }
   # return data frame with supervisors
   return(sups_df)

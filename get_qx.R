@@ -36,20 +36,20 @@ get_qx <- function(server, user, password, put_global=TRUE) {
   query <- paste0(API_URL, "/questionnaires")
 
   # Send GET request to API
-  data <- GET(query, authenticate(user, password),
-              query = list(limit = 40, offset = 1))
+  data <- httr::GET(query, authenticate(user, password),
+                    query = list(limit = 40, offset = 1))
 
   # If response code is 200, request was succesffuly processed
-  if (status_code(data)==200) {
+  if (httr::status_code(data)==200) {
 
     # save the list of imported templates from the API as a data frame
-    qnrList <- fromJSON(content(data, as = "text"), flatten = TRUE)
+    qnrList <- jsonlite::fromJSON(content(data, as = "text"), flatten = TRUE)
     qnrList_temp <- as.data.frame(qnrList$Questionnaires)
 
     if (qnrList$TotalCount <= 40) {
       # if 40 questionnaires or less, then do not need to call again
       # Extract information about questionnaires on server
-      qnrList_all <- arrange(qnrList_temp, Title, Version)
+      qnrList_all <- dplyr::arrange(qnrList_temp, Title, Version)
     } else {
       quest_more <- list(qnrList_temp)
       # If more than 40 questionnaires, run query again to get the rest
@@ -57,16 +57,17 @@ get_qx <- function(server, user, password, put_global=TRUE) {
 
       # send query for more questionnaires
       for(i in 2:nquery){
-        data2 <- GET(query, authenticate(user, password),
+        data2 <- httr::GET(query, authenticate(user, password),
                      query = list(limit = 40, offset = i))
 
-        qnrList_more <- fromJSON(content(data2, as = "text"), flatten = TRUE)
+        qnrList_more <- jsonlite::fromJSON(content(data2, as = "text"),
+                                           flatten = TRUE)
         questList_more <- as.data.frame(qnrList_more$Questionnaires)
         # append loop df to list
         quest_more[[i]] <- questList_more
       }
-      qnrList_temp <- bind_rows(quest_more)
-      qnrList_all <- arrange(qnrList_temp, Title, Version)
+      qnrList_temp <- dplyr::bind_rows(quest_more)
+      qnrList_all <- dplyr::arrange(qnrList_temp, Title, Version)
     }
 
     if (put_global==TRUE){
@@ -76,7 +77,7 @@ get_qx <- function(server, user, password, put_global=TRUE) {
       return(qnrList_all)
     }
 
-    } else if (status_code(data) == 401) {   # login error
+    } else if (httr::status_code(data) == 401) {   # login error
     message("Incorrect username or password. Check login credentials for API user")
       } else {
     # Issue error message

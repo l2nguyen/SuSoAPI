@@ -34,7 +34,7 @@ get_details <- function(export_URL,
   details_query <- paste0(export_URL, "/details")
 
   # Get status of export from server
-  statusExport <- GET(details_query, authenticate(user, password))
+  statusExport <- httr::GET(details_query, authenticate(user, password))
 
   # Get start time of export
   request_time <- as.POSIXct(headers(statusExport)$date,
@@ -44,15 +44,15 @@ get_details <- function(export_URL,
   request_time <- lubridate::with_tz(request_time, "UTC")
 
   # Convert server response in JSON to data frame
-  export_details <- fromJSON(content(statusExport, as = "text"), flatten = TRUE)
+  export_details <- jsonlite::fromJSON(content(statusExport, as = "text"),
+                                       flatten = TRUE)
 
     # add time of last request sent to data frame
   export_details$request_time <- request_time
 
   # Time of last update of status from server.
   # NOTE: This is not the same as the time the details query was sent
-  export_details$LastUpdateDate <- lubridate::ymd_hms(export_details$LastUpdateDate,
-                                                      tz = "UTC")
+  export_details$LastUpdateDate <- lubridate::ymd_hms(export_details$LastUpdateDate, tz = "UTC")
 
   return(export_details)
 }
