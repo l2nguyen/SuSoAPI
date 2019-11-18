@@ -33,7 +33,7 @@ get_supers <- function(server, user, password) {
   endpoint <- paste0(api_url, "/supervisors")
 
   # initial call to test API works
-  data <- httr::GET(endpoint, authenticate(login, password),
+  data <- httr::GET(endpoint, authenticate(user, password),
                     query= list(limit=40))
 
   # if API call works, get supervisor information
@@ -58,7 +58,7 @@ get_supers <- function(server, user, password) {
     sups_df <- df_list[[1]]
   } else{
     for (i in 2:n_calls){
-      loop_resp <- httr::GET(endpoint, authenticate(login, password),
+      loop_resp <- httr::GET(endpoint, authenticate(user, password),
                              query= list(limit=40, offset=i))
 
       if (status_code(loop_resp) == 200) {
