@@ -44,9 +44,6 @@ get_supers <- function(server, user, password) {
     df_list <- list(super_df)
     # get total count for iteration
     total_count <- sups$TotalCount
-    limit <- sups$Limit
-    # number of times to loop
-    n_calls <- ceiling(total_count/limit)
   } else if (httr::status_code(data) == 401) {# login error
     stop("Incorrect username or password. Check login credentials.")
   } else {# any other error
@@ -57,6 +54,10 @@ get_supers <- function(server, user, password) {
   if (total_count<=40){
     sups_df <- df_list[[1]]
   } else{
+    # use limit to figure out number of calls to make
+    limit <- sups$Limit
+    n_calls <- ceiling(total_count/limit)
+
     for (i in 2:n_calls){
       loop_resp <- httr::GET(endpoint, authenticate(user, password),
                              query= list(limit=40, offset=i))
