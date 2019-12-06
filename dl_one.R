@@ -203,7 +203,7 @@ dl_one <- function(
                        "All")
 
     # name of zip file
-    zip_name <- paste0(zip_path,".zip")
+    zip_name <- paste0(zip_path, ".zip")
 
     # Query to download data
     downloadData <- GET(
@@ -226,7 +226,7 @@ dl_one <- function(
 
       # unzip
       if (unzip == TRUE) {
-        unzip(zip_name,exdir = zip_path)
+        unzip(zipfile=zip_name, exdir = zip_path, unzip = getOption("unzip"))
       }
       message("Data files successfully downloaded into folder: ", "\n", zip_path)
     } else {
