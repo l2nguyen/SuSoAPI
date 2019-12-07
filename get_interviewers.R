@@ -47,7 +47,7 @@ get_interviewers <- function(super_names=NULL, super_ids=NULL,
   # function to check if supervisor exists
   sup_exists <- function(supervisor, data, stype="name"){
     # set variable name
-    var_name <- ifelse(stype=="name", "UserName", "UserId")
+    var_name <- ifelse(stype=="name", "SuperName", "SuperId")
     if (!(supervisor %in% data[[var_name]])){
       stop("User does not exist: ", supervisor)
     }
@@ -55,7 +55,7 @@ get_interviewers <- function(super_names=NULL, super_ids=NULL,
 
   # function get supervisor ID if given name
   get_sup_id <- function(sup_name, data){
-    id <- dplyr::filter(data, UserName==sup_name)$UserId
+    id <- dplyr::filter(data, SuperName==sup_name)$SuperId
     return(id)
   }
 
@@ -83,9 +83,7 @@ get_interviewers <- function(super_names=NULL, super_ids=NULL,
       all_ints_df <- data.frame(
         IsLocked = NA,
         CreationDate = NA,
-        DeviceId = NA,
-        UserId = NA,
-        UserName = NA)
+        DeviceId = NA)
     } else if (total_count>0 & total_count<=40){
       all_ints_df <- ints_df
     } else{
@@ -124,8 +122,7 @@ get_interviewers <- function(super_names=NULL, super_ids=NULL,
   #======== GET FULL LIST OF INTERVIEWERS ==========#
   # check all supervisor names or IDs specified exist
   if (is.null(super_names) & is.null(super_ids)) {
-    ids_to_call <- dplyr::pull(all_supers, UserId)
-    print(ids_to_call)
+    ids_to_call <- dplyr::pull(all_supers, SuperId)
   } else if (length(super_names)>0) {
     invisible(sapply(super_names, sup_exists, data=all_supers, stype="name"))
     # get IDs associated with users
@@ -138,18 +135,19 @@ get_interviewers <- function(super_names=NULL, super_ids=NULL,
     stop("Specify only either name or user IDs for supervisors.")
   }
 
-  filtered_supers <- dplyr::filter(all_supers, UserId %in% ids_to_call) %>%
-    dplyr::select(UserName, UserId) %>%
-    dplyr::rename(SuperId = UserId, SuperName = UserName)
+  filtered_supers <- dplyr::filter(all_supers, SuperId %in% ids_to_call) %>%
+    dplyr::select(SuperName, SuperId)
 
   # get full list of interviewers
   full_df_list <- lapply(ids_to_call, get_ints, base_url=api_url,
                          user_id=user, pass=password)
   # bind list into one big data frame
   all_interviewers <- dplyr::bind_rows(full_df_list) %>%
-     dplyr::rename(InterName = UserName, InterId = UserId) %>%
-     # add supervisor information
-     dplyr::inner_join(filtered_supers, by="SuperId")
+    dplyr::rename(InterName = UserName, InterId = UserId) %>%
+    # add supervisor information
+    dplyr::inner_join(filtered_supers, by="SuperId") %>%
+    # rearrange columns
+    dplyr::select(InterName, InterId, SuperName, SuperId, everything())
 
   return(all_interviewers)
 }

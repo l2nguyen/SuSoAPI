@@ -75,7 +75,8 @@ get_supers <- function(server, user, password) {
     }
     # bind all dataframes with supervisor info together
     sups_df <- dplyr::bind_rows(df_list) %>%
-      dplyr::select(UserName, UserId, IsLocked, CreationDate, DeviceId)
+      dplyr::select(UserName, UserId, IsLocked, CreationDate, DeviceId) %>%
+      dplyr::rename(SuperId = UserId, SuperName = UserName)
   }
   # return data frame with supervisors
   return(sups_df)
