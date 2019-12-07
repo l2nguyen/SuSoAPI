@@ -2,6 +2,7 @@
 
 ### Description
 Two functions to archive and unarchive assignments on the server.
+
 ### Usage
 ```R
 # archive assignments

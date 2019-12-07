@@ -11,7 +11,7 @@ Wrapper functions for Survey Solutions API.
 * [get_asgmts_list](get_asgmts_list.R): Returns all the assignments on the server for a version of a questionnaire. [How to use.](help/get_asgmts_list.md)
 * [archive_asgmts](archive_asgmts.R): Archive assignments. [How to use](help/archive_asgmts.md)
 * [get_supers](get_supers.R): Returns information about all the supervisors on the server. Due to current limitations of the API, only supervisors that are not archived/locked will appear in the data.
-* [get_interviewers](get_interviewers.R): Returns information about all the interviewers for specified supervisors. Due to current limitations of the API, only interviewers that are not archived/locked will appear in the data.
+* [get_interviewers](get_interviewers.R): Returns information about all the interviewers for specified supervisors. Due to current limitations of the API, only interviewers that are not archived/locked will appear in the data. [How to use](help/get_supers.md)
 
 ## Getting Started
 ### Prerequisites
