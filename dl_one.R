@@ -33,7 +33,6 @@ dl_one <- function(
   load_pkg('lubridate')
   load_pkg('here')
 
-  source(here::here("check_setup.R"))
   source(here::here("get_details.R"))
   source(here::here("get_qx.R"))
 
