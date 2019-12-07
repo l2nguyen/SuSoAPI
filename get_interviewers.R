@@ -1,4 +1,4 @@
-get_interviewers <- function(supers_name=NULL, supers_id=NULL,
+get_interviewers <- function(super_names=NULL, super_ids=NULL,
                              server, user, password){
 
   load_pkg <- function(x) {
@@ -29,7 +29,7 @@ get_interviewers <- function(supers_name=NULL, supers_id=NULL,
   }
 
   # check that not both qx name and template id is specified
-  if(!is.null(supers_name) & !is.null(supers_id)){
+  if(!is.null(super_names) & !is.null(super_ids)){
     stop("Specify only either name or user IDs for supervisors.")
   }
 
@@ -40,7 +40,7 @@ get_interviewers <- function(supers_name=NULL, supers_id=NULL,
   api_url <- sprintf("https://%s.mysurvey.solutions/api/v1",
                      server)
 
-  #==> GET DF OF SUPERS
+  #==> GET DF OF SUPERVISORS
   all_supers <- get_supers(server, user, password)
 
   #=== HELPER FUNCTION ====#
@@ -62,7 +62,6 @@ get_interviewers <- function(supers_name=NULL, supers_id=NULL,
   # function to make API call for interiewers for a supervisor
   get_ints <- function(sup_id, base_url, user_id, pass){
     int_endpoint <- paste0(base_url, "/supervisors/", sup_id, "/interviewers")
-    print(int_endpoint)
     data <- httr::GET(int_endpoint, authenticate(user_id, pass),
                       query= list(limit=40))
 
@@ -70,7 +69,10 @@ get_interviewers <- function(supers_name=NULL, supers_id=NULL,
       # save the list of imported templates from the API as a data frame
       inters <- jsonlite::fromJSON(content(data, as = "text"), flatten = TRUE)
 
+      # data frame of interviewers
+      ints_df <- inters$Users
       df_list <- list(ints_df)
+
       # get total counts
       total_count <- inters$TotalCount
     } else if (httr::status_code(data) == 401) {# login error
@@ -105,6 +107,8 @@ get_interviewers <- function(supers_name=NULL, supers_id=NULL,
     }
 
     all_ints_df <- dplyr::bind_rows(df_list)
+    # add supervisor Id
+    all_ints_df$SuperId <- sup_id
 
     # return data frame of interviewers for supervisor
     return(all_ints_df)
@@ -112,23 +116,28 @@ get_interviewers <- function(supers_name=NULL, supers_id=NULL,
 
   #======== GET FULL LIST OF INTERVIEWERS ==========#
   # check all supervisor names or IDs specified exist
-  if (length(supers_name)>0){
-    invisible(sapply(supers_name, sup_exists, data=all_supers, stype="name"))
+  if (length(super_names)>0){
+    invisible(sapply(super_names, sup_exists, data=all_supers, stype="name"))
     # get IDs associated with users
-    ids_to_call <- sapply(supers_name, get_sup_id, data = all_supers)
+    ids_to_call <- sapply(super_names, get_sup_id, data = all_supers)
   } else {
-    invisible(sapply(supers_id, sup_exists, data=all_supers, stype="id"))
+    invisible(sapply(super_ids, sup_exists, data=all_supers, stype="id"))
     # set IDs to get interviewers for
-    ids_to_call <- supers_id
+    ids_to_call <- super_ids
   }
 
-  full_df_list <- list()
-  for (val in ids_to_call) {
-    print(val)
-    full_df_list <- c(full_df_list, get_ints(val, api_url, user, password))
-  }
+  filtered_supers <- dplyr::filter(all_supers, UserId %in% ids_to_call) %>%
+     dplyr::select(UserName, UserId) %>%
+     dplyr::rename(SuperId = UserId, SuperName = UserName)
 
-  all_interviewers <- dplyr::bind_rows(full_df_list)
+  # get full list of interviewers
+  full_df_list <- lapply(ids_to_call, get_ints, base_url=api_url,
+                         user_id=user, pass=password)
+  # bind list into one big data frame
+  all_interviewers <- dplyr::bind_rows(full_df_list) %>%
+     dplyr::rename(InterName = UserName, InterId = UserId) %>%
+     # add supervisor information
+     dplyr::inner_join(filtered_supers, by="SuperId")
 
   return(all_interviewers)
 }
