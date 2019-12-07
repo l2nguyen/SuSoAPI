@@ -69,22 +69,27 @@ get_interviewers <- function(super_names=NULL, super_ids=NULL,
       # save the list of imported templates from the API as a data frame
       inters <- jsonlite::fromJSON(content(data, as = "text"), flatten = TRUE)
 
-      # data frame of interviewers
-      ints_df <- inters$Users
-      df_list <- list(ints_df)
-
       # get total counts
       total_count <- inters$TotalCount
+      # data frame of interviewers
+      ints_df <- inters$Users
     } else if (httr::status_code(data) == 401) {# login error
       stop("Incorrect username or password. Check login credentials.")
     } else {# any other error
       stop("Encountered issue with status code ", status_code(data))
     }
 
-    # if less than 40, return only data frame in list
-    if (total_count<=40){
-      all_ints_df <- df_list[[1]]
+    if (total_count == 0 | is.null(total_count)) {
+      all_ints_df <- data.frame(
+        IsLocked = NA,
+        CreationDate = NA,
+        DeviceId = NA,
+        UserId = NA,
+        UserName = NA)
+    } else if (total_count>0 & total_count<=40){
+      all_ints_df <- ints_df
     } else{
+      df_list = list(ints_df)
       # use limit to figure out number of calls to make
       limit <- inters$Limit
       n_calls <- ceiling(total_count/limit)
@@ -104,9 +109,11 @@ get_interviewers <- function(super_names=NULL, super_ids=NULL,
           stop("Encountered issue with status code ", status_code(loop_resp))
         }
       }
+
+      # bind all data frames together to get full list
+      all_ints_df <- dplyr::bind_rows(df_list)
     }
 
-    all_ints_df <- dplyr::bind_rows(df_list)
     # add supervisor Id
     all_ints_df$SuperId <- sup_id
 
@@ -116,19 +123,24 @@ get_interviewers <- function(super_names=NULL, super_ids=NULL,
 
   #======== GET FULL LIST OF INTERVIEWERS ==========#
   # check all supervisor names or IDs specified exist
-  if (length(super_names)>0){
+  if (is.null(super_names) & is.null(super_ids)) {
+    ids_to_call <- dplyr::pull(all_supers, UserId)
+    print(ids_to_call)
+  } else if (length(super_names)>0) {
     invisible(sapply(super_names, sup_exists, data=all_supers, stype="name"))
     # get IDs associated with users
     ids_to_call <- sapply(super_names, get_sup_id, data = all_supers)
-  } else {
+  } else if (length(super_ids)>0) {
     invisible(sapply(super_ids, sup_exists, data=all_supers, stype="id"))
     # set IDs to get interviewers for
     ids_to_call <- super_ids
+  } else {
+    stop("Specify only either name or user IDs for supervisors.")
   }
 
   filtered_supers <- dplyr::filter(all_supers, UserId %in% ids_to_call) %>%
-     dplyr::select(UserName, UserId) %>%
-     dplyr::rename(SuperId = UserId, SuperName = UserName)
+    dplyr::select(UserName, UserId) %>%
+    dplyr::rename(SuperId = UserId, SuperName = UserName)
 
   # get full list of interviewers
   full_df_list <- lapply(ids_to_call, get_ints, base_url=api_url,
