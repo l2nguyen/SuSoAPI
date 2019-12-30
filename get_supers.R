@@ -22,12 +22,20 @@ get_supers <- function(server, user, password) {
     }
   }
 
-  # build base URL for API
   server <- tolower(trimws(server))
 
+  # check server exists
+  server_url <- paste0("https://", server, ".mysurvey.solutions")
+
+  # Check server exists
+  tryCatch(httr::http_error(server_url),
+           error=function(err) {
+             err$message <- paste(server, "is not a valid server.")
+             stop(err)
+           })
+
   # build base URL for API
-  api_url <- sprintf("https://%s.mysurvey.solutions/api/v1",
-                     server)
+  api_url <- paste0(server_url, "/api/v1")
 
   # build query
   endpoint <- paste0(api_url, "/supervisors")

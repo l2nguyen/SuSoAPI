@@ -28,13 +28,15 @@ get_qx <- function(server, user, password, put_global=TRUE) {
   load_pkg("jsonlite")
   load_pkg("dplyr")
 
+  server <- tolower(trimws(server))
+
   # check server exists
   server_url <- paste0("https://", server, ".mysurvey.solutions")
 
   # Check server exists
   tryCatch(httr::http_error(server_url),
            error=function(err) {
-             err$message <- "Invalid server name."
+             err$message <- paste(server, "is not a valid server.")
              stop(err)
              })
 

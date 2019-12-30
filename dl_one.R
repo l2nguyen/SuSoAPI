@@ -50,7 +50,7 @@ dl_one <- function(
   # Check server exists
   tryCatch(httr::http_error(server_url),
            error=function(err) {
-             err$message <- "Invalid server name."
+             err$message <- paste(server, "is not a valid server.")
              stop(err)
            })
 
