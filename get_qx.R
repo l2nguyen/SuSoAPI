@@ -28,12 +28,21 @@ get_qx <- function(server, user, password, put_global=TRUE) {
   load_pkg("jsonlite")
   load_pkg("dplyr")
 
+  # check server exists
+  server_url <- paste0("https://", server, ".mysurvey.solutions")
+
+  # Check server exists
+  tryCatch(httr::http_error(server_url),
+           error=function(err) {
+             err$message <- "Server does not exist."
+             stop(err)
+             })
+
   # build base URL for API
-  API_URL <- sprintf("https://%s.mysurvey.solutions/api/v1",
-                     server)
+  api_url <- paste0(server_url, "/api/v1")
 
   # build query
-  query <- paste0(API_URL, "/questionnaires")
+  query <- paste0(api_url, "/questionnaires")
 
   # Send GET request to API
   data <- httr::GET(query, authenticate(user, password),
@@ -78,9 +87,9 @@ get_qx <- function(server, user, password, put_global=TRUE) {
     }
 
     } else if (httr::status_code(data) == 401) {   # login error
-    message("Incorrect username or password. Check login credentials for API user")
+    stop("Incorrect username or password.")
       } else {
     # Issue error message
-    message("Encountered issue with status code ", status_code(data))
+    stop("Encountered issue with status code ", status_code(data))
       }
 }
