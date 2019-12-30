@@ -43,13 +43,23 @@ dl_one <- function(
   # build base URL for API
   server <- tolower(str_trim(server))
 
-  api_URL <- sprintf("https://%s.mysurvey.solutions/api/v1",
-                     server)
+  # check server exists
+  server_url <- paste0("https://", server, ".mysurvey.solutions")
+
+  # Check server exists
+  # Check server exists
+  tryCatch(httr::http_error(server_url),
+           error=function(err) {
+             err$message <- "Server does not exist."
+             stop(err)
+           })
+
+  # build base URL for API
+  api_url <- paste0(server_url, "/api/v1")
 
   # check if list of questionnaire already exists
-  if (!exists("qnrList_all")) {
-    get_qx(server, user = user, password = password)
-  }
+  qnrList_all <- get_qx(server, user = user, password = password,
+                        put_global=FALSE)
 
   # check version number is numeric
   if (!is.numeric(version)) {
@@ -77,7 +87,7 @@ dl_one <- function(
   # -----------------------------------------------------------------------------
 
   export_URL <- sprintf("%s/export/%s/%s",
-                        api_URL, export_type, qx_id)
+                        api_url, export_type, qx_id)
 
   # post request to API
   start_query <- paste0(export_URL, "/start")
