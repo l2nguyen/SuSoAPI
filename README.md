@@ -34,7 +34,7 @@ You can use the functions in one of three ways:
 There are plans to make all this into a package in the future.
 
 #### Issues or suggestions
-If you encounter any issues with the functions, please report it in the [issues tab](https://github.com/l2nguyen/SuSoAPI/issues). Suggestions for features or endpoints that you would like a wrapper function to are also appreciated.
+If you encounter any issues with the functions, please report it in the [issues tab](https://github.com/l2nguyen/SuSoAPI/issues). Suggestions for features additions are also appreciated and can also be reported in the Issues tab.
 
 #### Server Details
 If you are using the functions to download the same type of data from the same server, you should make a serverDetails.R file to save time. Fill in this [template](serverDetails.R) with details on your server and login for the API user.
