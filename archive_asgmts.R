@@ -47,8 +47,18 @@ archive_asgmts <- function(ids = NULL, # assignment ID, can be vector
   # build base URL for API
   server <- tolower(trimws(server))
 
-  api_url <- sprintf("https://%s.mysurvey.solutions/api/v1",
-                     server)
+  # check server exists
+  server_url <- paste0("https://", server, ".mysurvey.solutions")
+
+  # Check server exists
+  tryCatch(httr::http_error(server_url),
+           error=function(err) {
+             err$message <- "Invalid server name."
+             stop(err)
+           })
+
+  # build base URL for API
+  api_url <- paste0(server_url, "/api/v1")
 
   # function archive one assignment
   archive_id <- function(x, url=api_url){
@@ -59,7 +69,9 @@ archive_asgmts <- function(ids = NULL, # assignment ID, can be vector
 
     if (httr::status_code(resp)==200){
       message("Successfully archived assignment #", x)
-    } else{
+    } else if (httr::status_code(resp)==401){
+      stop("Invalid login or password.")
+    } else {
       message("Error archiving assignment #", x)
     }
   }

@@ -34,7 +34,7 @@ get_qx <- function(server, user, password, put_global=TRUE) {
   # Check server exists
   tryCatch(httr::http_error(server_url),
            error=function(err) {
-             err$message <- "Server does not exist."
+             err$message <- "Invalid server name."
              stop(err)
              })
 
