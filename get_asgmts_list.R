@@ -126,19 +126,24 @@ get_asgmts_list <- function(template_id = NULL, # template id
                      responsible = responsible,
                      showArchive = archived)
 
+
   # Send GET request to API
-  data <- httr::GET(endpoint, authenticate(login, password),
+  data <- httr::GET(endpoint, authenticate(user, password),
                     query = user_query)
 
-  # save the list of imported templates from the API as a data frame
-  assignments <- jsonlite::fromJSON(content(data, as = "text"))
-
-  # get total count
-  total_count <- assignments$TotalCount
-  # get limit
-  limit <- assignments$Limit
-
-  n_calls <- ceiling(total_count/limit)
+  if (httr::status_code(data)==200){
+    assignments <- jsonlite::fromJSON(content(data, as = "text"))
+    # get total count
+    total_count <- assignments$TotalCount
+    # get limit
+    limit <- assignments$Limit
+    # calculate number of calls that needs to be made
+    n_calls <- ceiling(total_count/limit)
+  } else if (httr::status_code(data)==401){
+    stop("Invalid login or password.")
+  } else {
+    stop(paste0("API request failed with code ", status_code(data)))
+  }
 
   # function to transform the id vars from list into columns
   transform_id_vars <- function(df){
@@ -169,23 +174,23 @@ get_asgmts_list <- function(template_id = NULL, # template id
     )
 
     # Send GET request to API
-    resp <- httr::GET(endpoint, authenticate(login, password),
+    resp <- httr::GET(endpoint, authenticate(user, password),
                       query = user_query_loop)
 
     # save the list of imported templates from the API as a data frame
     assignments <- jsonlite::fromJSON(content(resp, as = "text"))
 
-    # if call to api was unsuccesful, stop
-    if (status_code(resp) != 200) {
-      stop(paste0('API request failed with code', status_code(resp)))
+    # if successful, add information to list of data frames
+    if (httr::status_code(resp)==200){
+      assignments_temp <- as.data.frame(assignments$Assignments)
+
+      # transform identifyng variable from list to column
+      assignments_id <- transform_id_vars(assignments_temp)
+
+      df_list[[i]] <- assignments_id
+    } else {
+      stop(paste0("API request failed with code ", status_code(resp)))
     }
-
-    assignments_temp <- as.data.frame(assignments$Assignments)
-
-    # transform identifyng variable from list to column
-    assignments_id <- transform_id_vars(assignments_temp)
-
-    df_list[[i]] <- assignments_id
   }
 
   # bind all output together into a big dataframe
