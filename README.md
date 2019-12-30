@@ -12,6 +12,7 @@ Wrapper functions for Survey Solutions API.
 * [archive_asgmts](archive_asgmts.R): Archive assignments. [How to use](help/archive_asgmts.md)
 * [get_supers](get_supers.R): Returns information about all the supervisors on the server. Due to current limitations of the API, only supervisors that are not archived/locked will appear in the data. [How to use](help/get_supers.md)
 * [get_interviewers](get_interviewers.R): Returns information about all the interviewers for specified supervisors. Due to current limitations of the API, only interviewers that are not archived/locked will appear in the data. 
+* [interview_stats](interview_stats.R): Returns the stats about interviews, including: number of unanswered questions, number of questions with errors, number of comments, and number of rejections by Supervisor and HQ.
 
 ## Getting Started
 ### Prerequisites
@@ -29,6 +30,11 @@ You can use the functions in one of three ways:
 1. Run the R file for the function in R Studio by opening it and pressing **Ctrl+Shift+Enter**. This will run all the code for the function in the file and now the function will be in the working environment for use in the working environment.
 2. In the menu, go to **Code -> Source File...** or use the **Ctrl+Alt+G** keyboard shortcut. Select the function you would like to use and now it will be available for use in the working environment.
 3. To load the function at the beginning of your code, use the [source function](https://www.rdocumentation.org/packages/base/versions/3.5.3/topics/source).
+
+There are plans to make all this into a package in the future.
+
+#### Issues or suggestions
+If you encounter any issues with the functions, please report it in the [issues tab](https://github.com/l2nguyen/SuSoAPI/issues). Suggestions for features or endpoints that you would like a wrapper function to are also appreciated.
 
 #### Server Details
 If you are using the functions to download the same type of data from the same server, you should make a serverDetails.R file to save time. Fill in this [template](serverDetails.R) with details on your server and login for the API user.
