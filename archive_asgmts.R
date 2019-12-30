@@ -32,6 +32,11 @@ archive_asgmts <- function(ids = NULL, # assignment ID, can be vector
     }
   }
 
+  # check if assignment IDs were provided
+  if (is.null(ids)){
+    stop("Assignment IDs to archive need to be specified.")
+  }
+
   # check if all assignment IDs are numeric
   if (sum(sapply(suppressWarnings({as.numeric(ids)}), is.na)) > 0){
     stop("Assignment IDs must be a number.")
